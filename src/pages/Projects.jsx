@@ -169,7 +169,7 @@ const Projects = () => {
 
         const projectsWithDemoLink = filteredProjects.map((project) => {
           const demoLinkMatch =
-            project.description && project.website.match(/\bhttps?:\/\/\S+/);
+            project.description && project.website.includes(/\bhttps?:\/\/\S+/);
           const demoLink = demoLinkMatch ? demoLinkMatch[0] : null;
           return {
             ...project,
