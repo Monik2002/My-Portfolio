@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .dark-bg {
+    @apply bg-dark-bg;
+  }
+
+  .dark-text {
+    @apply text-dark-text;
+  }
+}
+
+html,
+body {
+  @apply bg-white text-black;
+  margin: 0; /* Ensure no margin is applied by default */
+}
+
+html.dark,
+body.dark {
+  @apply bg-dark-bg text-dark-text;
+}
+
+body {
+  min-height: 100vh; 
+}
