@@ -9,18 +9,85 @@
 //   </React.StrictMode>
 // );
 
-import React from "react";
+// import React from "react";
+// import ReactDOM from "react-dom/client";
+// import "./index.css";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import Home from "./pages/Home";
+// import About from "./pages/About";
+// import Projects from "./pages/Projects";
+// import Contact from "./pages/Contact";
+// import Footer from "./components/Footer";
+// import Navigation from "./components/Navigation";
+// import App from "./App";
+
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />,
+//     children: [
+//       {
+//         path: "/",
+//         element: (
+//           <>
+//             <Navigation />
+//             <Home />
+//             <Footer />
+//           </>
+//         ),
+//       },
+//       {
+//         path: "/me",
+//         element: (
+//           <>
+//             <Navigation />
+//             <About />
+//             <Footer />
+//           </>
+//         ),
+//       },
+//       {
+//         path: "/projects",
+//         element: (
+//           <>
+//             <Navigation />
+//             <Projects />
+//             <Footer />
+//           </>
+//         ),
+//       },
+//       {
+//         path: "/contact",
+//         element: (
+//           <>
+//             <Navigation />
+//             <Contact />
+//             <Footer />
+//           </>
+//         ),
+//       },
+//     ],
+//   },
+// ]);
+
+// ReactDOM.createRoot(document.getElementById("root")).render(
+//   <React.StrictMode>
+//     <RouterProvider router={router} />
+//     {/* <App /> */}
+//   </React.StrictMode>
+// );
+
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-// import App from "./App.jsx";
-import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Projects from "./pages/Projects";
-import Contact from "./pages/Contact";
-import Footer from "./components/Footer";
-import Navigation from "./components/Navigation";
+import "./index.css";
 import App from "./App";
+import { ClipLoader } from "react-spinners";
+
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+const Projects = lazy(() => import("./pages/Projects"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 const router = createBrowserRouter([
   {
@@ -30,50 +97,87 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
-          <>
-            <Navigation />
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-screen">
+                <ClipLoader
+                  color={"#123abc"}
+                  size={150}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            }
+          >
             <Home />
-            <Footer />
-          </>
+          </Suspense>
         ),
       },
       {
         path: "/me",
         element: (
-          <>
-            <Navigation />
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-screen">
+                <ClipLoader
+                  color={"#123abc"}
+                  size={150}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            }
+          >
             <About />
-            <Footer />
-          </>
+          </Suspense>
         ),
       },
       {
         path: "/projects",
         element: (
-          <>
-            <Navigation />
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-screen">
+                <ClipLoader
+                  color={"#123abc"}
+                  size={150}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            }
+          >
             <Projects />
-            <Footer />
-          </>
+          </Suspense>
         ),
       },
       {
         path: "/contact",
         element: (
-          <>
-            <Navigation />
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-screen">
+                <ClipLoader
+                  color={"#123abc"}
+                  size={150}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            }
+          >
             <Contact />
-            <Footer />
-          </>
+          </Suspense>
         ),
       },
     ],
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+const container = document.getElementById("root");
+const root = ReactDOM.createRoot(container);
+root.render(
   <React.StrictMode>
     <RouterProvider router={router} />
-    {/* <App /> */}
   </React.StrictMode>
 );
