@@ -257,7 +257,10 @@ const Projects = () => {
                 <div key={project.id} className="card anchored large">
                   <div className="stars">
                     <div className="star">
-                      <a href={project.html_url + "/stargazers"}>
+                      <a
+                        href={project.html_url + "/stargazers"}
+                        target="_blank"
+                      >
                         {project.stargazers_count}
                       </a>
                       <StarIcon />
