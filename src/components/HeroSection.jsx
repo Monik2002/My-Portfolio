@@ -8,7 +8,7 @@ const HeroSection = () => {
         <header className={`hero index `}>
           <h1>Hey, I&apos;m Monik</h1>
           <p className={`hero-description small width`}>
-            I&apos;m a programmer , developer , Algoritmist who loves building
+            I&apos;m a programmer , developer , Algorithmist who loves building
             web apps and sharing tech insights. Always eager to learn and
             collaborate on new projects! 🌱
           </p>

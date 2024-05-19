@@ -820,7 +820,7 @@ a.button:active {
 }
 
 .card.muted time {
-  display: none;
+  display: block;
   /* color: var(--font-color-muted); */
 }
 
