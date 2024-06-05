@@ -63,3 +63,9 @@ To run this project locally, follow these steps:
 
 https://github.com/Monik2002/My-Portfolio/assets/87751450/858f1901-9755-4db7-a145-f8e3b744fd56
 
+
+
+![photo_2024-06-05_19-09-30](https://github.com/Monik2002/My-Portfolio/assets/87751450/e8c18e15-6c27-40b8-a4a2-9507c433adea)
+
+<img width="113" alt="image" src="https://github.com/Monik2002/My-Portfolio/assets/87751450/9662b94e-c5be-4e4f-bde9-5307bae17134">
+
