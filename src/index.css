@@ -26,3 +26,8 @@ body.dark {
 body {
   min-height: 100vh; 
 }
+
+/* In your Tailwind CSS file or custom CSS */
+.highlight {
+  @apply border-2 border-blue-500 bg-blue-100; /* Adjust as needed */
+}
