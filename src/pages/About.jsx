@@ -627,6 +627,24 @@ const About = () => {
                 </section>
               </div>
             </div>
+            {/* <h1
+              style={{
+                position: "relative",
+                fontFamily: "var(--title-font)",
+                color: "#fff",
+                textShadow:
+                  "0 0 8px #fff, 0 0 16px #0fa, 0 0 32px #0fa, 0 0 48px #0fa",
+                fontSize: "2rem",
+                lineHeight: "2.5rem",
+                letterSpacing: "-1px",
+                textAlign: "center",
+                margin: "0",
+                padding: "0",
+                fontStyle: "italic",
+              }}
+            >
+              Monik
+            </h1> */}
           </div>
         </div>
       </main>
