@@ -11,4 +11,5 @@
 - Limited the welcome animation to once per browser tab session and removed Shepherd guided tours and unused animation dependencies.
 - Corrected featured-project ownership links, filtered blank GitHub descriptions, and displayed repository language metadata.
 - Added unit coverage for session-scoped welcome behavior and GitHub project display data.
+- Added featured-project fallback and retry controls for GitHub API rate-limit failures.
 - Removed Vite and React 18-only UI dependencies; updated the runtime requirement to Node.js 20.19+, 22.13+, or 24+.

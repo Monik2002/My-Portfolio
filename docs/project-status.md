@@ -16,6 +16,7 @@ _Updated 2026-11-01._
 - Shepherd tours, their CSS, and their dependencies have been removed.
 - Verified the deployed Vercel origin from the GitHub repository homepage; canonical URLs, sitemap, and robots directives use that origin.
 - Corrected home-page project cards to link only to verified owner repositories; the GitHub project list omits blank descriptions and displays available language metadata.
+- Added a curated-project fallback and retry/profile links when GitHub's public API rate limit prevents loading the full project list.
 
 ## In progress / owner actions
 
@@ -28,7 +29,7 @@ _Updated 2026-11-01._
 ## Known limitations and accepted risks
 
 - Contact spam friction is client-side and bypassable; no server proxy/rate limiter/CAPTCHA was added.
-- External GitHub API calls use the public unauthenticated rate limit.
+- External GitHub API calls use the public unauthenticated rate limit; the Projects page now shows curated projects when that limit is exhausted.
 - Inline styles remain allowed by `style-src` to preserve existing UI behavior.
 - GitHub Actions are version-tagged rather than pinned to immutable commit SHAs.
 - Full `npm audit` reports five moderate findings in the ESLint/minimatch development-tooling chain; `npm audit --omit=dev` reports none. Automatic fixes propose an incompatible downgrade, so no forced fix was applied.

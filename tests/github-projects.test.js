@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { normalizeGitHubProjects } from "../src/lib/github-projects.js";
+import {
+  getProjectsForDisplay,
+  normalizeGitHubProjects,
+} from "../src/lib/github-projects.js";
 
 const validRepository = {
   id: 1,
@@ -73,4 +76,29 @@ test("accepts a safe external demo URL", () => {
   ]);
 
   assert.equal(project.demoLink, "https://example.com/");
+});
+
+test("shows featured owner projects when the live GitHub list is unavailable", () => {
+  const projects = getProjectsForDisplay([]);
+
+  assert.deepEqual(
+    projects.map(({ name }) => name),
+    ["Binge Box", "Shopping List", "Trippify Travel App"]
+  );
+  assert.ok(
+    projects.every((project) =>
+      project.html_url.startsWith("https://github.com/Monik2002/")
+    )
+  );
+  assert.ok(projects.every((project) => project.description.trim().length > 0));
+});
+
+test("prefers live GitHub projects when they are available", () => {
+  const liveProjects = normalizeGitHubProjects([validRepository]);
+
+  assert.equal(getProjectsForDisplay(liveProjects), liveProjects);
+});
+
+test("rejects invalid input to the project display fallback", () => {
+  assert.throws(() => getProjectsForDisplay(null), TypeError);
 });

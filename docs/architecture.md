@@ -24,11 +24,11 @@ _Updated 2026-11-01._
 
 `RootLayout` → `SiteProviders` (theme and toast context) → welcome overlay, `Navigation`, route content, and `Footer`. Route content is passed through the server layout rather than imported into a client shell.
 
-The projects page fetches public repositories from GitHub in the browser and normalizes the response before rendering. The contact form submits directly from the browser to EmailJS using public identifiers. No application server API handles either integration.
+The projects page fetches public repositories from GitHub in the browser and normalizes the response before rendering. If GitHub is rate-limited or unavailable, it shows a curated set of verified owner projects and an explicit retry/profile link instead of an empty page. The contact form submits directly from the browser to EmailJS using public identifiers. No application server API handles either integration.
 
 ## External integrations and dependencies
 
-- GitHub REST API: `https://api.github.com/users/Monik2002/repos`.
+- GitHub REST API: `https://api.github.com/users/Monik2002/repos` (unauthenticated public requests are rate-limited; curated projects provide the fallback).
 - EmailJS browser SDK: contact-form delivery.
 - Google Fonts CSS/font files: Inter and IBM Plex Mono.
 - The welcome screen uses a small CSS animation and session storage to display once per browser tab session; reduced-motion preferences skip it.

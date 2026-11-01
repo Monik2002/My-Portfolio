@@ -337,14 +337,18 @@
 // -------------------
 
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
 import StarIcon from "../components/StarIcon";
-import { normalizeGitHubProjects } from "../lib/github-projects";
+import {
+  getProjectsForDisplay,
+  normalizeGitHubProjects,
+} from "../lib/github-projects";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [projectLoadMessage, setProjectLoadMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [retryCount, setRetryCount] = useState(0);
   const projectsPerPage = 4;
   useEffect(() => {
     let isMounted = true;
@@ -356,7 +360,7 @@ const Projects = () => {
           { headers: { Accept: "application/vnd.github+json" } }
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch projects");
+          throw new Error(`GitHub returned HTTP ${response.status}.`);
         }
         const projectsWithDemoLink = normalizeGitHubProjects(
           await response.json()
@@ -366,11 +370,23 @@ const Projects = () => {
         );
 
         if (isMounted) {
-          setProjects(projectsWithDemoLink);
+          setProjects(getProjectsForDisplay(projectsWithDemoLink));
+          setProjectLoadMessage(
+            projectsWithDemoLink.length > 0
+              ? ""
+              : "GitHub returned no displayable projects. Showing featured projects instead."
+          );
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
-        toast.error("Uh oh! Something went wrong.");
+        if (isMounted) {
+          setProjects(getProjectsForDisplay([]));
+          setProjectLoadMessage(
+            error.message === "GitHub returned HTTP 403."
+              ? "GitHub's public API rate limit is temporarily exhausted (HTTP 403). Showing featured projects instead."
+              : "The live GitHub project list is temporarily unavailable. Showing featured projects instead."
+          );
+        }
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -383,7 +399,7 @@ const Projects = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [retryCount]);
 
   // Get current projects for the page
   const indexOfLastProject = currentPage * projectsPerPage;
@@ -405,7 +421,7 @@ const Projects = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && projects.length === 0) {
     return (
       <main>
         <div>
@@ -439,22 +455,26 @@ const Projects = () => {
             <div className="project-preview">
               {currentProjects.map((project) => (
                 <div key={project.id} className="card anchored large">
-                  <div className="stars">
-                    <div className="star">
-                      <a
-                        href={project.html_url + "/stargazers"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {project.stargazers_count}
-                      </a>
-                      <StarIcon />
+                  {project.stargazers_count !== null && (
+                    <div className="stars">
+                      <div className="star">
+                        <a
+                          href={project.html_url + "/stargazers"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {project.stargazers_count}
+                        </a>
+                        <StarIcon />
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div>
-                    <time>
-                      {new Date(project.created_at).getFullYear().toString()}
-                    </time>
+                    {project.created_at && (
+                      <time>
+                        {new Date(project.created_at).getFullYear().toString()}
+                      </time>
+                    )}
                     <a
                       className="card-header"
                       href={project.html_url}
@@ -491,6 +511,32 @@ const Projects = () => {
                 </div>
               ))}
             </div>
+            {projectLoadMessage && (
+              <div className="card single mt-4" role="status">
+                <p>{projectLoadMessage}</p>
+                <div className="links">
+                  <a
+                    className="button small"
+                    href="https://github.com/Monik2002?tab=repositories"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Browse GitHub
+                  </a>
+                  <button
+                    className="button small"
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => {
+                      setIsLoading(true);
+                      setRetryCount((count) => count + 1);
+                    }}
+                  >
+                    {isLoading ? "Retrying..." : "Retry"}
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="flex justify-between mt-4">
               <button
                 className="button small flex"
@@ -503,7 +549,8 @@ const Projects = () => {
                 className="button small flex"
                 onClick={handleNextPage}
                 disabled={
-                  currentPage === Math.ceil(projects.length / projectsPerPage)
+                  currentPage ===
+                  Math.ceil(projects.length / projectsPerPage)
                 }
               >
                 Next &rarr;
