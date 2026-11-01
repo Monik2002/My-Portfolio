@@ -24,13 +24,12 @@ _Updated 2026-11-01._
 
 `RootLayout` → `SiteProviders` (theme and toast context) → welcome overlay, `Navigation`, route content, and `Footer`. Route content is passed through the server layout rather than imported into a client shell.
 
-The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form optionally checks email addresses with Hunter on field blur, then verifies mailbox access through an OTP flow and submits to same-origin Route Handlers. Hunter failures and exhausted credits fail open; Resend sends mail using a server-only API key, while Upstash Redis stores short-lived verification state, cached precheck results, quota-pause state, and atomic daily contact quotas.
+The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form verifies mailbox access through an OTP flow and submits to same-origin Route Handlers; Resend sends mail using a server-only API key, while Upstash Redis stores short-lived verification state and atomic daily contact quotas.
 
 ## External integrations and dependencies
 
 - GitHub REST API: `https://api.github.com/users/Monik2002/repos` via `src/app/api/projects/route.js`. `GITHUB_TOKEN` is optional and server-only; without it, the public unauthenticated rate limit still applies.
 - Resend REST API: server-side verification and contact-message delivery.
-- Hunter email verifier: optional server-side precheck via `/api/contact/email-check`; `HUNTER_API_KEY` is never exposed to the browser, and all non-invalid outcomes preserve the OTP path.
 - Upstash Redis and Ratelimit: cross-instance contact throttles, one-time verification state, and atomic per-email daily quotas.
 - Google Fonts CSS/font files: Inter and IBM Plex Mono.
 - The welcome screen uses a small CSS animation and session storage to display once per browser tab session; reduced-motion preferences skip it.

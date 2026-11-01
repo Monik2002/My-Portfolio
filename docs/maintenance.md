@@ -15,8 +15,7 @@ Review Next.js, React, Node.js, Tailwind, and Node engine support before upgrade
 ## Troubleshooting
 
 - Missing UI assets: inspect static imports under `src/assets/` and Next image build output.
-- Contact form unavailable: confirm the Resend sender domain is verified and all five required server-only `RESEND_*`, `CONTACT_*`, and `UPSTASH_REDIS_*` variables are configured for the deployment. `HUNTER_API_KEY` is optional and not required for contact delivery.
-- Hunter precheck skipped: confirm `HUNTER_API_KEY` is present if checks are desired. Provider errors are intentionally fail-open; after Hunter returns its usage-limit `429`, Redis pauses future prechecks for 32 days while OTP verification and message delivery continue.
+- Contact form unavailable: confirm the Resend sender domain is verified and all five required server-only `RESEND_*`, `CONTACT_*`, and `UPSTASH_REDIS_*` variables are configured for the deployment.
 - Contact messages rejected/spammed: review Resend delivery logs and Upstash quotas; the server enforces OTP attempts, IP/email request windows, and two messages per verified normalized email per UTC day.
 - CSP blocks a resource: identify the actual required host and narrowly add it to the correct directive; never broadly permit arbitrary scripts.
 - Header test fails: inspect the production `next start` output and `src/proxy.ts`/`next.config.ts`.

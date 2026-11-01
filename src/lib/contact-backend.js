@@ -43,11 +43,6 @@ export function getContactServices() {
         limiter: Ratelimit.slidingWindow(10, "15 m"),
         prefix: "contact:submission:ip",
       }),
-      emailCheckIp: new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(10, "15 m"),
-        prefix: "contact:email-check:ip",
-      }),
     };
   }
 

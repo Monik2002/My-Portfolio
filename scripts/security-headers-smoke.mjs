@@ -21,7 +21,6 @@ const server = spawn(
     env: {
       ...process.env,
       PORT: String(port),
-      HUNTER_API_KEY: "",
     },
   }
 );
@@ -116,21 +115,6 @@ try {
     }
   );
   assert.equal(invalidVerification.status, 400, "verification should validate email");
-
-  const skippedEmailCheck = await fetch(
-    new URL("/api/contact/email-check", baseUrl),
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "sender@example.com" }),
-    }
-  );
-  assert.equal(
-    skippedEmailCheck.status,
-    200,
-    "contact email check should fail open when Hunter is not configured"
-  );
-  assert.deepEqual(await skippedEmailCheck.json(), { status: "skipped" });
 
   const invalidConfirmation = await fetch(
     new URL("/api/contact/verification/confirm", baseUrl),

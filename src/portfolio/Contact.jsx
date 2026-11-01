@@ -6,8 +6,6 @@ import { toast } from "react-hot-toast";
 const Contact = () => {
   const form = useRef();
   const [email, setEmail] = useState("");
-  const [emailCheckStatus, setEmailCheckStatus] = useState("");
-  const [emailCheckFor, setEmailCheckFor] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationSentTo, setVerificationSentTo] = useState("");
   const [verifiedEmail, setVerifiedEmail] = useState("");
@@ -15,46 +13,6 @@ const Contact = () => {
   const [isRequestingCode, setIsRequestingCode] = useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const emailCheckRequestRef = useRef(0);
-
-  const checkEmailAddress = async () => {
-    const emailInput = form.current?.elements.user_email;
-    if (!emailInput?.checkValidity()) return;
-
-    const checkedEmail = email.trim().toLowerCase();
-    if (
-      emailCheckFor === checkedEmail &&
-      emailCheckStatus &&
-      emailCheckStatus !== "checking"
-    ) {
-      return;
-    }
-
-    const requestId = ++emailCheckRequestRef.current;
-    setEmailCheckFor(checkedEmail);
-    setEmailCheckStatus("checking");
-    try {
-      const response = await fetch("/api/contact/email-check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: checkedEmail }),
-      });
-      const result = await response.json();
-      if (requestId !== emailCheckRequestRef.current) return;
-      if (!response.ok) {
-        throw new Error("The email precheck request failed.");
-      }
-
-      const acceptedStatuses = ["valid", "invalid", "unknown", "skipped"];
-      setEmailCheckStatus(
-        acceptedStatuses.includes(result.status) ? result.status : "skipped"
-      );
-    } catch (error) {
-      if (requestId !== emailCheckRequestRef.current) return;
-      console.error("Contact email precheck failed.", error);
-      setEmailCheckStatus("skipped");
-    }
-  };
 
   const requestVerificationCode = async () => {
     const formElement = form.current;
@@ -62,13 +20,6 @@ const Contact = () => {
 
     const emailInput = formElement.elements.user_email;
     if (!emailInput.reportValidity()) return;
-    if (
-      emailCheckFor === email.trim().toLowerCase() &&
-      emailCheckStatus === "invalid"
-    ) {
-      toast.error("Please check the email address before requesting a code.");
-      return;
-    }
 
     setIsRequestingCode(true);
     try {
@@ -180,8 +131,6 @@ const Contact = () => {
       toast.success("Message sent successfully!");
       formElement.reset();
       setEmail("");
-      setEmailCheckFor("");
-      setEmailCheckStatus("");
       setVerificationCode("");
       setVerificationSentTo("");
       setVerifiedEmail("");
@@ -265,12 +214,8 @@ const Contact = () => {
                       maxLength={254}
                       disabled={isBusy}
                       value={email}
-                      onBlur={checkEmailAddress}
                       onChange={(event) => {
-                        emailCheckRequestRef.current += 1;
                         setEmail(event.target.value);
-                        setEmailCheckFor("");
-                        setEmailCheckStatus("");
                         setVerificationCode("");
                         setVerificationSentTo("");
                         setVerifiedEmail("");

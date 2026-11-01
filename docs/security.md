@@ -6,7 +6,7 @@ _Updated 2026-11-01._
 
 Assets are the public portfolio content, contact submissions, and integrity/availability of the deployment. The browser, GitHub response, user-submitted form fields, npm packages, GitHub Actions, Resend, Upstash Redis, Google Fonts, and hosting platform are separate trust boundaries. Public visitors can access every route.
 
-The site has no user account system or Server Action. It has a read-only GitHub Route Handler and public contact Route Handlers protected by short-lived email verification. Upstash Redis is the shared server-side store for OTPs, rate limits, daily quotas, and optional Hunter precheck state.
+The site has no user account system or Server Action. It has a read-only GitHub Route Handler and public contact Route Handlers protected by short-lived email verification. Upstash Redis is the shared server-side store for OTPs, rate limits, and daily quotas.
 
 ## Threat scenarios and current classification
 
@@ -18,8 +18,7 @@ The site has no user account system or Server Action. It has a read-only GitHub 
 | SSRF | Low | The projects Route Handler uses a fixed GitHub API URL and accepts no caller-supplied URL. |
 | API abuse / denial of service | Medium | The public read-only GitHub route caches responses for one hour; contact code requests and submissions have shared Upstash limits by HMAC-hashed IP/email. Provider quotas also bound Resend traffic. |
 | Contact spam | Medium | A sender must receive an OTP, verification tokens are one-time, code attempts are limited, and two messages per normalized email are reserved atomically per UTC day. Gmail dot/plus aliases share a quota. |
-| Third-party precheck outage/quota | Low | Hunter is optional; only explicit invalid results prompt correction. Timeouts, uncertain results, usage exhaustion, and provider errors fail open to OTP verification. The server-side key and shared cooldown prevent exposing credentials and repeatedly consuming credits after exhaustion. |
-| Secret leakage | Low | `GITHUB_TOKEN`, `RESEND_API_KEY`, `HUNTER_API_KEY`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Contact recipient/sender configuration must not use a `NEXT_PUBLIC_` prefix. |
+| Secret leakage | Low | `GITHUB_TOKEN`, `RESEND_API_KEY`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Contact recipient/sender configuration must not use a `NEXT_PUBLIC_` prefix. |
 | Dependency/supply-chain compromise | Medium | Lockfile, `npm ci`, audit gate, Dependabot, CodeQL, least-permission CI. GitHub Actions use major-version tags rather than immutable SHAs; review updates. |
 | Open redirect | Low | No redirect endpoint exists. GitHub repository URLs are constrained to the expected owner; demo URLs accept only HTTP(S) and disallow credentials. |
 | Clickjacking | Low | `X-Frame-Options: DENY` and CSP `frame-ancestors 'none'`. |
@@ -40,14 +39,13 @@ The site has no user account system or Server Action. It has a read-only GitHub 
 - `src/lib/github-projects.js` validates response shape, repository ownership/URLs, dates, counts, and HTTP(S) demo URLs before display.
 - React renders descriptions as text; do not introduce unsafe HTML rendering.
 - Contact fields are validated again in the server Route Handler. Verification codes expire after 10 minutes, can be attempted at most five times per 15-minute window, and successful verification tokens expire after 15 minutes. A Redis Lua script atomically consumes the token and reserves the sender's daily message slot before Resend is called.
-- The optional Hunter precheck receives the entered email address. Only its explicit `invalid` status prompts correction; unknown/skipped results do not prevent OTP verification. Its documented usage-limit `429` sets a shared 32-day cooldown; provider failures are logged without request data and fail open.
 - Redis keys use HMAC-derived email/IP identifiers and store only a hash of each OTP and verification token. Mail contents are sent to Resend and are not written to application logs or Redis.
 - Errors shown to visitors are generic. Logs must not include form values or credentials.
 - The projects endpoint is a public read-only GET with no user input or request body; it returns generic errors and does not expose the upstream error payload or token. Reassess abuse controls if it gains caller-controlled inputs or side effects.
 
 ## Environment and secret management
 
-`GITHUB_TOKEN` is optional and server-only; add it to Vercel Preview/Production environment variables to raise the GitHub API rate limit. Use a fine-grained token with no repository permissions for public repository reads, set an expiry, and never prefix it with `NEXT_PUBLIC_`. Contact delivery requires server-only `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` values. `HUNTER_API_KEY` is optional and server-only; the email address is sent to Hunter when the precheck is enabled. Verify the sending domain in Resend and configure variables separately for each Vercel environment.
+`GITHUB_TOKEN` is optional and server-only; add it to Vercel Preview/Production environment variables to raise the GitHub API rate limit. Use a fine-grained token with no repository permissions for public repository reads, set an expiry, and never prefix it with `NEXT_PUBLIC_`. Contact delivery requires server-only `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` values. Verify the sending domain in Resend and configure variables separately for each Vercel environment.
 
 ## Dependency and release security
 

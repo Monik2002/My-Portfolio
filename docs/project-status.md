@@ -20,7 +20,6 @@ _Updated 2026-11-01._
 - Added a server-side GitHub repositories endpoint with optional `GITHUB_TOKEN`, one-hour response caching, and tests for authenticated/unauthenticated requests and upstream rate-limit failures.
 - Added Vercel Speed Insights integration and updated the supported Node.js engine range to remove end-of-life Node 20.
 - Replaced browser EmailJS delivery with a Resend/Upstash email-verification flow and a server-enforced two-messages-per-verified-email daily quota.
-- Added an optional server-side Hunter email precheck with address-result caching, IP rate limiting, and fail-open behavior when Hunter is not configured, inconclusive, unavailable, or out of monthly credits.
 
 ## In progress / owner actions
 
@@ -29,7 +28,6 @@ _Updated 2026-11-01._
 - Disable the old EmailJS contact template so existing deployments or direct public-key requests cannot bypass the new server-side quota.
 - Change Vercel's project Node.js default from discontinued 20.x to 24.x; the existing production override is 26.x.
 - Deploy the Speed Insights integration and confirm events appear in the Vercel dashboard.
-- Add `HUNTER_API_KEY` as a server-only Vercel variable if the optional precheck should be enabled; redeploy after configuring it. The contact form remains usable without the key or after the monthly credit allowance is exhausted.
 
 ## Known limitations and accepted risks
 
