@@ -72,7 +72,6 @@
 
 // export default HighlightPreview;
 
-// import React from "react";
 import PropTypes from "prop-types";
 
 const HighlightPreview = ({
@@ -95,7 +94,7 @@ const HighlightPreview = ({
       >
         <img
           aria-hidden="true"
-          src={imageUrl["1x"]}
+          src={imageUrl["1x"].src}
           alt="image"
           style={{
             position: "absolute",
@@ -111,10 +110,10 @@ const HighlightPreview = ({
         />
         <picture>
           <source
-            srcSet={`${imageUrl["1x"]} 1x, ${imageUrl["1.5x"]} 1.5x, ${imageUrl["2x"]} 2x`}
+            srcSet={`${imageUrl["1x"].src} 1x, ${imageUrl["1.5x"].src} 1.5x, ${imageUrl["2x"].src} 2x`}
           />
           <img
-            src={imageUrl["1x"]}
+            src={imageUrl["1x"].src}
             alt=""
             width="45"
             height="45"
@@ -145,9 +144,9 @@ HighlightPreview.propTypes = {
   date: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   imageUrl: PropTypes.shape({
-    "1x": PropTypes.string.isRequired,
-    "1.5x": PropTypes.string.isRequired,
-    "2x": PropTypes.string.isRequired,
+    "1x": PropTypes.shape({ src: PropTypes.string.isRequired }).isRequired,
+    "1.5x": PropTypes.shape({ src: PropTypes.string.isRequired }).isRequired,
+    "2x": PropTypes.shape({ src: PropTypes.string.isRequired }).isRequired,
   }).isRequired,
   // link: PropTypes.string.isRequired,
 };

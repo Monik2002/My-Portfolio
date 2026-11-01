@@ -1,71 +1,47 @@
-# My Portfolio Website
+# Monik Chatterjee — Portfolio
 
-This is my portfolio website made using react.js and hosted on vercel.
+A personal portfolio built with Next.js App Router, React, Tailwind CSS, and custom CSS. It presents the home, about, projects, and contact pages.
 
-# Folder Structure
-```
-.
-├── public
-│   ├── _redirects
-│   ├── favicon.ico
-├── src
-│   ├── assests
-│   ├── components
-│       ├── Footer.jsx
-│       ├── HeroSection.jsx
-│       ├── Navigation.jsx
-│       ├── HighlightPreview.jsx
-│       ├── HighlightsSection.jsx
-│       ├── ProjectsSection.jsx
-│       ├── StarIcon.jsx
-│       ├── ThemeContext.jsx
-│   ├── pages
-│       ├── Home.jsx
-│       ├── About.jsx
-│       ├── Projects.jsx
-│       ├── Contact.jsx
-│   ├── App.css
-│   ├── App.jsx
-│   ├── index.css
-│   ├── main.jsx
-├── .gitignore
-├── package.json
-├── index.html
-├── README.md
+## Preview
+
+[Watch the portfolio walkthrough](https://github.com/Monik2002/My-Portfolio/assets/87751450/858f1901-9755-4db7-a145-f8e3b744fd56).
+
+![Portfolio preview](https://github.com/Monik2002/My-Portfolio/assets/87751450/e8c18e15-6c27-40b8-a4a2-9507c433adea)
+
+## Requirements
+
+- Node.js 20.19+, 22.13+, or 24+
+- npm
+
+## Local setup
+
+```powershell
+npm ci
+Copy-Item .env.example .env.local
+npm run dev
 ```
 
-## Installation
+The site is available at `http://localhost:3000`. The example includes the existing public EmailJS identifiers; verify them against the EmailJS dashboard before using the contact form. These values are browser-visible and are not secrets. See [development setup](./docs/development.md).
 
-To run this project locally, follow these steps:
+## Routes
 
-1. **Clone the repository**:
+- `/` — home
+- `/me` — about
+- `/projects` — public GitHub projects
+- `/contact` — contact form
 
-   ```bash
-   git clone https://github.com/Monik2002/react-portfolio.git
+## Quality and security checks
 
-    cd MY_PORTFOLIO
-    ```
-2. **Install the dependencies**:
- 
-   ```bash
-   npm install
-   ```
+```powershell
+npm run lint
+npm run typecheck
+npm run build
+npm test
+npm audit --audit-level=high
+```
 
-3. **Run the development server**:
+Run `npm test` after a successful production build; it runs unit/security-control tests and starts the built site to verify routes and response headers.
 
-   ```bash
-   npm run dev
-   ```
-4. **Open the source code and start editing!**
-5. **Your site is now running at `http://localhost:5173`!** 🚀
+## Project guidance
 
-# Video
-
-https://github.com/Monik2002/My-Portfolio/assets/87751450/858f1901-9755-4db7-a145-f8e3b744fd56
-
-
-
-![photo_2024-06-05_19-09-30](https://github.com/Monik2002/My-Portfolio/assets/87751450/e8c18e15-6c27-40b8-a4a2-9507c433adea)
-
-<img width="113" alt="image" src="https://github.com/Monik2002/My-Portfolio/assets/87751450/9662b94e-c5be-4e4f-bde9-5307bae17134">
-
+Read [AGENTS.md](./AGENTS.md), then the relevant files in [`docs/`](./docs/). Report vulnerabilities privately as described in [SECURITY.md](./SECURITY.md).

@@ -1,4 +1,3 @@
-// import React from "react";
 import HighlightPreview from "./HighlightPreview";
 import cssImage1x from "../assets/cssImage1x.png";
 import cssImage1_5x from "../assets/cssImage1_5x.png";
@@ -76,6 +75,6 @@ const HighlightSection = () => {
     </section>
     // </div>
   );
-}
+};
 
 export default HighlightSection;

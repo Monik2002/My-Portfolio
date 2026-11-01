@@ -397,6 +397,43 @@ img {
   max-width: 100%;
 }
 
+.welcome-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #030712;
+  color: #f3f4f6;
+  pointer-events: none;
+}
+
+.welcome-splash h1 {
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 8rem);
+  font-weight: 700;
+}
+
+.welcome-splash--leaving {
+  animation: welcome-splash-exit 350ms ease-in 400ms forwards;
+}
+
+@keyframes welcome-splash-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-splash--leaving {
+    animation: none;
+  }
+}
+
 mark {
   font-weight: 600;
   background: #fdd94a;
@@ -510,6 +547,8 @@ a.button img {
   min-height: 20px;
   min-width: 20px;
   max-height: 20px;
+  width: auto;
+  height: auto;
   margin-right: 0.25rem;
 }
 
@@ -609,6 +648,10 @@ a.button:active {
   transition: transform 0.2s ease-in-out;
 }
 
+.navigation nav a.item span {
+  display: none;
+}
+
 .navigation a.item.brand {
   display: none;
   gap: 0.4rem;
@@ -686,6 +729,7 @@ a.button:active {
   }
 
   .navigation a.item.brand span,
+  .navigation nav a.item span,
   .theme-toggle span {
     display: block;
   }
@@ -729,6 +773,15 @@ a.button:active {
 
 /* .star a {
   color: var(--font-color-muted);
+}
+
+.project-language {
+  display: inline-flex;
+  margin-top: 0.4rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 0.8rem;
 } */
 
 .star a:hover {
@@ -1504,4 +1557,3 @@ p.text-medium {
   background: var(--scrollbar-color);
   border-radius: 2px;
 }
-

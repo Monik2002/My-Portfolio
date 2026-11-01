@@ -1,18 +1,39 @@
-// import React from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import github from "../assets/nav-github.png";
 import floppylogo from "../assets/floppylogo.png";
 import twitterlogo from "../assets/twitterlogo.png";
 import linkedinlogo from "../assets/linkedinlogo.png";
-import ScrollToTop from "react-scroll-to-top";
 
 function Footer() {
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+
+  useEffect(() => {
+    const updateVisibility = () => setShowScrollToTop(window.scrollY > 60);
+    updateVisibility();
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateVisibility);
+  }, []);
+
   return (
     <>
-      <ScrollToTop smooth top="60" width="28" />
+      {showScrollToTop && (
+        <button
+          type="button"
+          className="scroll-to-top"
+          aria-label="Scroll to top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <span aria-hidden="true">↑</span>
+        </button>
+      )}
       <footer className="footer">
         <section>
           <span>
-            <img src={floppylogo} className="logo" alt="Monik" />
+            <Image src={floppylogo} className="logo" alt="Monik" />
           </span>
           <nav>
             <a
@@ -20,16 +41,16 @@ function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src={twitterlogo} alt="Home" className="nav-image" />
+              <Image src={twitterlogo} alt="Twitter" className="nav-image" />
             </a>
             <a
               href="https://www.linkedin.com/in/monikanchan-chatterjee-a86862200"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
+              <Image
                 src={linkedinlogo}
-                alt="Home"
+                alt="LinkedIn"
                 className="nav-image"
                 style={{
                   width: "25px",
@@ -68,7 +89,7 @@ function Footer() {
               rel="noopener noreferrer"
             >
               <span>GitHub</span>
-              <img src={github} alt="GitHub" />
+              <Image src={github} alt="GitHub" />
             </a>
             {/* <a
               href="https://www.netlify.com"

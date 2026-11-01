@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from "react";
 import HeroSection from "../components/HeroSection";
 import HighlightSection from "../components/HighlightsSection";

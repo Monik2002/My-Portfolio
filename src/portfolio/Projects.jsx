@@ -1,3 +1,5 @@
+"use client";
+
 // import { useState, useEffect } from "react";
 // import toast from "react-hot-toast";
 // import ClipLoader from "react-spinners/ClipLoader";
@@ -334,58 +336,36 @@
 
 // -------------------
 
-import { useState, useEffect, useRef } from "react";
-import Shepherd from "shepherd.js";
-import "shepherd.js/dist/css/shepherd.css";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import ClipLoader from "react-spinners/ClipLoader";
 import StarIcon from "../components/StarIcon";
+import { normalizeGitHubProjects } from "../lib/github-projects";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 4;
-  const tourRef = useRef(null);
-
   useEffect(() => {
     let isMounted = true;
 
     const fetchProjects = async () => {
       try {
         const response = await fetch(
-          "https://api.github.com/users/Monik2002/repos"
+          "https://api.github.com/users/Monik2002/repos",
+          { headers: { Accept: "application/vnd.github+json" } }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch projects");
         }
-        const data = await response.json();
-        // Filter out forks
-        const filteredProjects = data.filter(
-          (project) => !project.fork && project.name !== "Monik2002"
+        const projectsWithDemoLink = normalizeGitHubProjects(
+          await response.json()
         );
-        // Sort projects by stargazers count
-        filteredProjects.sort(
-          (a, b) => b.stargazers_count - a.stargazers_count
+        projectsWithDemoLink.sort(
+          (first, second) => second.stargazers_count - first.stargazers_count
         );
-
-        const projectsWithDemoLink = filteredProjects.map((project) => {
-          const hasHttp =
-            project.description && project?.website?.includes("http");
-          const hasHttps =
-            project.description && project?.website?.includes("https");
-          const demoLink = hasHttp || hasHttps;
-          return {
-            ...project,
-            demoLink,
-          };
-        });
 
         if (isMounted) {
-          localStorage.setItem(
-            "projects",
-            JSON.stringify(projectsWithDemoLink)
-          );
           setProjects(projectsWithDemoLink);
         }
       } catch (error) {
@@ -398,84 +378,11 @@ const Projects = () => {
       }
     };
 
-    const savedProjects = localStorage.getItem("projects");
-    if (savedProjects) {
-      setProjects(JSON.parse(savedProjects));
-      setIsLoading(false); // Set loading to false if data is in localStorage
-    } else {
-      fetchProjects();
-    }
+    void fetchProjects();
 
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  useEffect(() => {
-    if (tourRef.current) return;
-
-    const tour = new Shepherd.Tour({
-      defaults: {
-        classes: "shepherd-theme-arrows",
-        scrollTo: true,
-      },
-    });
-
-    tour.addStep({
-      id: "step-1",
-      text: "This is the projects page.",
-      attachTo: {
-        element: ".hero h1",
-        on: "bottom",
-      },
-      buttons: [
-        {
-          text: "Next",
-          action: tour.next,
-        },
-      ],
-    });
-
-    tour.addStep({
-      id: "step-2",
-      text: "Here you can see a list of projects.",
-      attachTo: {
-        element: ".project-preview",
-        on: "top",
-      },
-      buttons: [
-        {
-          text: "Back",
-          action: tour.back,
-        },
-        {
-          text: "Next",
-          action: tour.next,
-        },
-      ],
-    });
-
-    tour.addStep({
-      id: "step-3",
-      text: "Use these buttons to navigate through the project pages.",
-      attachTo: {
-        element: ".flex.justify-between",
-        on: "top",
-      },
-      buttons: [
-        {
-          text: "Back",
-          action: tour.back,
-        },
-        {
-          text: "Done",
-          action: tour.complete,
-        },
-      ],
-    });
-
-    tour.start();
-    tourRef.current = tour;
   }, []);
 
   // Get current projects for the page
@@ -500,14 +407,22 @@ const Projects = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <ClipLoader
-          color={"#123abc"}
-          size={150}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
-      </div>
+      <main>
+        <div>
+          <div className="container">
+            <header className="hero">
+              <h1>Projects</h1>
+            </header>
+          </div>
+          <div
+            className="flex h-screen items-center justify-center"
+            role="status"
+            aria-label="Loading projects"
+          >
+            <div className="loading-spinner" aria-hidden="true" />
+          </div>
+        </div>
+      </main>
     );
   }
 
@@ -529,6 +444,7 @@ const Projects = () => {
                       <a
                         href={project.html_url + "/stargazers"}
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         {project.stargazers_count}
                       </a>
@@ -543,18 +459,21 @@ const Projects = () => {
                       className="card-header"
                       href={project.html_url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       {project.name}
                     </a>
                     <p>{project.description}</p>
+                    {project.language && (
+                      <span className="project-language">{project.language}</span>
+                    )}
                   </div>
                   <div className="links anchored">
                     <a
                       className="button small flex"
                       href={project.html_url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       Source
                     </a>
@@ -563,7 +482,7 @@ const Projects = () => {
                         className="button small flex"
                         href={project.demoLink}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                       >
                         Demo
                       </a>

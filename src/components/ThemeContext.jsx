@@ -1,28 +1,63 @@
-import { createContext, useState, useEffect } from "react";
+"use client";
+
+import {
+  createContext,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import PropTypes from "prop-types";
 
 export const ThemeContext = createContext();
 
+const themeChangedEvent = "portfolio-theme-change";
+let inMemoryDarkMode = false;
+
+function getDarkModeSnapshot() {
+  try {
+    const savedTheme = window.localStorage.getItem("theme");
+    if (savedTheme !== null) {
+      inMemoryDarkMode = savedTheme === "dark";
+    }
+  } catch (error) {
+    console.error("Could not read the saved theme preference.", error);
+  }
+
+  return inMemoryDarkMode;
+}
+
+function subscribeToThemeChanges(callback) {
+  window.addEventListener(themeChangedEvent, callback);
+  window.addEventListener("storage", callback);
+
+  return () => {
+    window.removeEventListener(themeChangedEvent, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
 export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const isDarkMode = useSyncExternalStore(
+    subscribeToThemeChanges,
+    getDarkModeSnapshot,
+    () => false
+  );
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      document.documentElement.classList.add(savedTheme);
-      document.body.classList.add(savedTheme);
-      setIsDarkMode(savedTheme === "dark");
-    }
-  }, []);
+    document.documentElement.classList.toggle("dark", isDarkMode);
+    document.body.classList.toggle("dark", isDarkMode);
+  }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
-    document.documentElement.classList.remove(isDarkMode ? "dark" : "light");
-    document.documentElement.classList.add(newTheme);
-    document.body.classList.remove(isDarkMode ? "dark" : "light");
-    document.body.classList.add(newTheme);
-    localStorage.setItem("theme", newTheme);
-    setIsDarkMode(!isDarkMode);
+    inMemoryDarkMode = !isDarkMode;
+    try {
+      window.localStorage.setItem(
+        "theme",
+        inMemoryDarkMode ? "dark" : "light"
+      );
+    } catch (error) {
+      console.error("Could not save the theme preference.", error);
+    }
+    window.dispatchEvent(new Event(themeChangedEvent));
   };
 
   return (

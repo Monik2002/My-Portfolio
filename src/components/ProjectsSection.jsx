@@ -1,34 +1,41 @@
-// import React from "react";
-import { NavLink } from "react-router-dom";
+import Link from "next/link";
 import Proptypes from "prop-types";
 
-const ProjectPreview = ({ year, title, description, source, demoLink }) => {
+const ProjectPreview = ({ title, description, source, demoLink }) => {
   return (
     <div className="anchored card">
       <div>
-        <time>{year}</time>
         <a
           className="card-header"
           href={source}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           {title}
         </a>
         <p>{description}</p>
       </div>
       <div className="anchored links">
-        <a className="button" href={source}>
+        <a
+          className="button"
+          href={source}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Source code for ${title}`}
+        >
           Source
         </a>
-        <a
-          className="button flex"
-          href={demoLink}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Demo
-        </a>
+        {demoLink && (
+          <a
+            className="button flex"
+            href={demoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Live demo of ${title}`}
+          >
+            Demo
+          </a>
+        )}
       </div>
     </div>
   );
@@ -41,31 +48,27 @@ const ProjectsSection = () => {
         <div>
           <div className="title">Projects</div>
         </div>
-        <NavLink className="button" to="/projects">
+        <Link className="button" href="/projects">
           View all
-        </NavLink>
+        </Link>
       </h2>
       <div className="post-preview">
         <ProjectPreview
-          year="2023"
-          title="Binge-box-Project"
+          title="Binge Box"
           description="Provides you with a curated collection of top-rated movies and TV shows!"
           source="https://github.com/Monik2002/Binge-box-Project"
-          demoLink="main--bingeboxx.netlify.app/"
+          demoLink="https://main--bingeboxx.netlify.app/"
         />
         <ProjectPreview
-          year="2023"
-          title="Vanilla JS shopping list"
-          description="This web application allows you to create and manage your shopping list online."
-          source="https://github.com/taniarascia/takenote"
+          title="Shopping List"
+          description="Vanilla JS shopping list"
+          source="https://github.com/Monik2002/Shopping-list-JS"
           demoLink="https://shopping-list-js-1.netlify.app/"
         />
         <ProjectPreview
-          year="2023"
-          title="Web Music Player"
-          description="This is a web-based music player that allows you to play, pause, play the next track, play the previous track, and even start playing from a specific point in the song."
-          source="https://github.com/taniarascia/chip8"
-          demoLink="https://music-player321.netlify.app/"
+          title="Trippify Travel App"
+          description="A travel-planning app."
+          source="https://github.com/Monik2002/Trippify-Travel-App"
         />
       </div>
     </section>
@@ -73,11 +76,10 @@ const ProjectsSection = () => {
 };
 
 ProjectPreview.propTypes = {
-  year: Proptypes.string.isRequired,
   title: Proptypes.string.isRequired,
   description: Proptypes.string.isRequired,
   source: Proptypes.string.isRequired,
-  demoLink: Proptypes.string.isRequired,
+  demoLink: Proptypes.string,
 };
 
 export default ProjectsSection;

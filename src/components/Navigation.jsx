@@ -1,5 +1,9 @@
+"use client";
+
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import search from "../assets/nav-search.png";
 import floppy from "../assets/nav-floppy.png";
 import github from "../assets/nav-github.png";
@@ -10,6 +14,7 @@ import { ThemeContext } from "./ThemeContext";
 
 const Navigation = () => {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const pathname = usePathname();
 
   return (
     <section
@@ -22,29 +27,49 @@ const Navigation = () => {
       <div className="container">
         <nav>
           <div className="nav-item-outer">
-            <NavLink className="item home " to="/" aria-current="page">
-              <img src={floppy} alt="Home" className="nav-image" />
+            <Link
+              className={`item home ${pathname === "/" ? "active" : ""}`}
+              href="/"
+              aria-current={pathname === "/" ? "page" : undefined}
+              aria-label="Home"
+            >
+              <Image src={floppy} alt="" className="nav-image" />
               <span>Home</span>
-            </NavLink>
+            </Link>
           </div>
           <div className="nav-item-outer">
-            <NavLink className="item about" to="/me">
-              <img src={search} alt="About" className="nav-image" />
+            <Link
+              className={`item about ${pathname === "/me" ? "active" : ""}`}
+              href="/me"
+              aria-current={pathname === "/me" ? "page" : undefined}
+              aria-label="About"
+            >
+              <Image src={search} alt="" className="nav-image" />
               <span>About</span>
-            </NavLink>
+            </Link>
           </div>
 
           <div className="nav-item-outer">
-            <NavLink className="item projects" to="/projects">
-              <img src={projects} alt="Projects" className="nav-image" />
+            <Link
+              className={`item projects ${pathname === "/projects" ? "active" : ""}`}
+              href="/projects"
+              aria-current={pathname === "/projects" ? "page" : undefined}
+              aria-label="Projects"
+            >
+              <Image src={projects} alt="" className="nav-image" />
               <span>Projects</span>
-            </NavLink>
+            </Link>
           </div>
           <div className="nav-item-outer">
-            <NavLink className="item contact" to="/contact">
-              <img src={blog} alt="Contact" className="nav-image" />
+            <Link
+              className={`item contact ${pathname === "/contact" ? "active" : ""}`}
+              href="/contact"
+              aria-current={pathname === "/contact" ? "page" : undefined}
+              aria-label="Contact"
+            >
+              <Image src={blog} alt="" className="nav-image" />
               <span>Contact</span>
-            </NavLink>
+            </Link>
           </div>
           <div className="nav-item-outer">
             <a
@@ -53,14 +78,14 @@ const Navigation = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <img src={github} alt="GitHub" className="nav-image" />
+              <Image src={github} alt="GitHub" className="nav-image" />
               <span>GitHub</span>
             </a>
           </div>
         </nav>
         <div className="theme-toggle">
-          <button onClick={toggleDarkMode}>
-            <img src={moon} alt="Theme" />
+          <button type="button" onClick={toggleDarkMode} aria-label="Toggle dark mode">
+            <Image src={moon} alt="" />
           </button>
         </div>
       </div>

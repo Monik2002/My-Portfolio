@@ -392,6 +392,7 @@
 // };
 
 // export default About;
+// ----------------------------
 
 const About = () => {
   return (
@@ -473,6 +474,7 @@ const About = () => {
                       <a
                         href="https://mail.google.com/mail/?view=cm&fs=1&to=www.monikchatterjee@gmail.com&su=Hello%20Monik&body=Hi%20Monik,%0D%0A%0D%0AI%20wanted%20to%20reach%20out%20to%20you%20regarding..."
                         target="_blank"
+                        rel="noopener noreferrer"
                       >
                         Mail me here!
                       </a>

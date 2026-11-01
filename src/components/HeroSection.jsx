@@ -1,4 +1,4 @@
-// import React from "react";
+import Image from "next/image";
 import myPhoto from "../assets/professional_photo.jpg";
 
 const HeroSection = () => {
@@ -14,7 +14,7 @@ const HeroSection = () => {
           </p>
         </header>
         <div className="decoration">
-          <img
+          <Image
             src={myPhoto}
             alt="myPhoto"
             className="image hero-image"
