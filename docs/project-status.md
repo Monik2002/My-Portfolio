@@ -19,7 +19,7 @@ _Updated 2026-11-01._
 - Added a curated-project fallback and retry/profile links when GitHub's public API rate limit prevents loading the full project list.
 - Added a server-side GitHub repositories endpoint with optional `GITHUB_TOKEN`, one-hour response caching, and tests for authenticated/unauthenticated requests and upstream rate-limit failures.
 - Added Vercel Speed Insights integration and updated the supported Node.js engine range to remove end-of-life Node 20.
-- Replaced browser EmailJS delivery with a Resend/Upstash email-verification flow and a server-enforced two-messages-per-verified-email daily quota.
+- Replaced browser EmailJS delivery with a Resend/Upstash email-verification flow and server-enforced daily quotas of two verification emails and two contact messages per normalized email.
 - Added optional server-side EmailJS fallback delivery for explicit Resend daily/monthly quota errors; OTP verification and the daily sender quota remain enforced by the same API.
 
 ## In progress / owner actions

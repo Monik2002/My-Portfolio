@@ -6,9 +6,11 @@ import {
   hashContactValue,
   isContactEmailConfigured,
   logContactError,
+  RESERVE_VERIFICATION_EMAIL_SCRIPT,
   sendContactEmail,
 } from "../../../../lib/contact-backend";
 import {
+  getDailyContactQuotaWindow,
   isValidContactEmail,
   normalizeEmailForContactLimit,
 } from "../../../../lib/contact-validation";
@@ -62,6 +64,27 @@ export async function POST(request) {
     });
   }
 
+  let dailyQuotaKey;
+  try {
+    const { date, expiresInSeconds } = getDailyContactQuotaWindow();
+    dailyQuotaKey = `contact:verification:sent:${emailHash}:${date}`;
+    const reserved = await services.redis
+      .createScript(RESERVE_VERIFICATION_EMAIL_SCRIPT)
+      .eval([dailyQuotaKey], [String(expiresInSeconds)]);
+    if (reserved === 0) {
+      return jsonError(
+        "This email address has reached its limit of two verification codes today.",
+        429
+      );
+    }
+    if (reserved !== 1) {
+      throw new Error("Could not reserve a verification email quota.");
+    }
+  } catch (error) {
+    logContactError("Contact verification daily quota check failed.", error);
+    return jsonError("The contact form is temporarily unavailable.", 503);
+  }
+
   const verificationCode = createVerificationCode();
   const verificationKey = `contact:otp:${emailHash}`;
   try {
@@ -87,6 +110,14 @@ export async function POST(request) {
       logContactError(
         "Could not remove a failed contact verification code.",
         cleanupError
+      );
+    }
+    try {
+      await services.redis.decr(dailyQuotaKey);
+    } catch (rollbackError) {
+      logContactError(
+        "Could not restore a failed verification email quota.",
+        rollbackError
       );
     }
     logContactError("Contact verification email delivery failed.", error);

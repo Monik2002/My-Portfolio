@@ -30,9 +30,9 @@ _Updated 2026-11-01._
 
 - **Status:** accepted.
 - **Context:** a syntactically valid address does not prove mailbox access, and browser-side EmailJS sends cannot reliably enforce a daily sender cap.
-- **Decision:** verify sender mailbox access using a one-time email code, send mail from a server-side Resend API key, and store rate limits, verification state, and a two-per-day quota in Upstash Redis. Gmail dot/plus aliases share quota; the daily window uses UTC.
+- **Decision:** verify sender mailbox access using a one-time email code, send mail from a server-side Resend API key, and store rate limits, verification state, and separate two-per-day quotas for verification emails and contact messages in Upstash Redis. Gmail dot/plus aliases share quotas; daily windows use UTC.
 - **Alternatives:** retain EmailJS and accept a bypassable limit, or add a different server-side email provider.
-- **Consequences:** production contact delivery requires a verified sending domain and server-only Resend/Upstash environment variables; Redis failures fail closed.
+- **Consequences:** production contact delivery requires a verified sending domain and server-only Resend/Upstash environment variables; Redis failures fail closed. Failed email delivery releases its daily quota reservation when Redis is available.
 
 ## ADR 0005 — Use EmailJS only for Resend quota fallback
 

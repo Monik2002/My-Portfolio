@@ -111,3 +111,13 @@ export const RESERVE_CONTACT_MESSAGE_SCRIPT = `
   redis.call("DEL", KEYS[1])
   return 1
 `;
+
+export const RESERVE_VERIFICATION_EMAIL_SCRIPT = `
+  local count = tonumber(redis.call("GET", KEYS[1]) or "0")
+  if count >= 2 then
+    return 0
+  end
+  redis.call("INCR", KEYS[1])
+  redis.call("EXPIRE", KEYS[1], tonumber(ARGV[1]))
+  return 1
+`;

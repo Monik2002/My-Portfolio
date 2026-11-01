@@ -24,14 +24,14 @@ _Updated 2026-11-01._
 
 `RootLayout` → `SiteProviders` (theme and toast context) → welcome overlay, `Navigation`, route content, and `Footer`. Route content is passed through the server layout rather than imported into a client shell.
 
-The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form verifies mailbox access through an OTP flow and submits to same-origin Route Handlers; Resend is primary and optional server-side EmailJS fallback is used only for explicit Resend daily/monthly quota errors. Upstash Redis stores short-lived verification state and atomic daily contact quotas.
+The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form verifies mailbox access through an OTP flow and submits to same-origin Route Handlers; Resend is primary and optional server-side EmailJS fallback is used only for explicit Resend daily/monthly quota errors. Upstash Redis stores short-lived verification state, atomic per-email daily limits of two verification emails and two contact messages, and request throttles.
 
 ## External integrations and dependencies
 
 - GitHub REST API: `https://api.github.com/users/Monik2002/repos` via `src/app/api/projects/route.js`. `GITHUB_TOKEN` is optional and server-only; without it, the public unauthenticated rate limit still applies.
 - Resend REST API: server-side verification and contact-message delivery.
 - EmailJS REST API: optional server-side fallback after explicit Resend quota errors; template IDs and credentials are configured only in server environment variables.
-- Upstash Redis and Ratelimit: cross-instance contact throttles, one-time verification state, and atomic per-email daily quotas.
+- Upstash Redis and Ratelimit: cross-instance contact throttles, one-time verification state, and atomic per-email daily quotas for verification emails and contact messages.
 - Google Fonts CSS/font files: Inter and IBM Plex Mono.
 - The welcome screen uses a small CSS animation and session storage to display once per browser tab session; reduced-motion preferences skip it.
 - The canonical production origin is taken from the GitHub repository homepage URL in `src/lib/site-metadata.js`.
