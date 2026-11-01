@@ -16,4 +16,4 @@ The maintainer will acknowledge a report, investigate it, and coordinate a fix a
 
 ## Scope notes
 
-The portfolio has no application-owned API, authentication, or database. The contact form uses browser-visible EmailJS configuration; those identifiers are not secrets. Contact-form abuse should also be reported to the maintainer and EmailJS.
+The portfolio has public application APIs for GitHub project data and contact submissions. The contact form requires email OTP verification and uses server-side Resend and Upstash credentials. Report contact delivery or abuse issues privately to the maintainer; do not include personal message contents or credentials.

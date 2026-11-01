@@ -4,7 +4,7 @@ _Updated 2026-11-01._
 
 ## Application-owned endpoints
 
-The application exposes one read-only Next.js Route Handler. There are no Server Actions, authentication endpoints, or database endpoints.
+The application exposes a read-only GitHub Route Handler and contact form Route Handlers. Contact endpoints are public, but require a short-lived email-verification token to send mail.
 
 ## GitHub repositories
 
@@ -16,14 +16,17 @@ The application exposes one read-only Next.js Route Handler. There are no Server
 - **Caching:** successful repository responses are cached for one hour and may be served stale for up to one day while revalidating. Error responses are not cached.
 - **Abuse surface:** the route is a public, read-only GET with no caller-supplied URL, request body, or user-specific data. Keep the upstream URL fixed and do not return the token or GitHub error payloads.
 
-## EmailJS contact form
+## Verified contact form
 
-- **Request:** the browser SDK posts the named form fields to EmailJS from `src/portfolio/Contact.jsx` using the configured public service ID, template ID, and public key.
-- **Fields:** `user_name`, `user_email`, `user_subject`, and `message`; the bot honeypot must remain empty.
-- **Validation/abuse controls:** browser-required inputs, minimum page dwell, honeypot, pending-submit state, and a browser-local 30-second cooldown. These do not replace provider-side validation or abuse controls and can be bypassed by a direct client.
-- **Secrets/authentication:** no server credential or user authentication is used. EmailJS IDs are public configuration and should be restricted by origin and provider quotas.
-- **Errors:** visitor messages are generic; diagnostic logs must not include submitted form data.
+- **Optional address precheck:** `POST /api/contact/email-check` accepts an email and returns `valid`, `invalid`, `unknown`, or `skipped`. The optional Hunter integration runs server-side, rate-limits by IP, and caches HMAC-keyed results. Only an explicit `invalid` result prompts correction; disabled configuration, exhausted credits, rate limits, timeouts, and other provider failures return `skipped` so the OTP flow remains available.
+- **Request code:** `POST /api/contact/verification` accepts an email address and honeypot. It sends a cryptographically random six-digit code through Resend; the HMAC of the code is stored in Upstash Redis for 10 minutes.
+- **Verify code:** `POST /api/contact/verification/confirm` accepts the email and code. Redis atomically consumes the code and stores a hash of a random one-time submission token for 15 minutes.
+- **Submit:** `POST /api/contact` accepts the name, email, subject, message, honeypot, and one-time token. It validates all fields, atomically reserves a send against the two-message daily quota, and sends plain text through Resend with the verified email as `reply_to`.
+- **Limits:** verification-code sends are limited to 3 per normalized email and 5 per IP per 15 minutes; code attempts are limited to 5 per email and 10 per IP per 15 minutes; message submissions are limited to 10 per IP per 15 minutes. The persistent per-email quota resets at UTC midnight. Gmail dot/plus aliases are grouped; other addresses are case-insensitive.
+- **Secrets/data:** `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Optional `HUNTER_API_KEY` is server-only; the email address is sent to Hunter only for the optional precheck. Redis keys contain HMAC-derived identifiers, not raw email addresses. Never log codes, tokens, message contents, or credentials.
+- **Failure handling:** requests fail closed if Redis is unavailable. A failed Resend delivery attempts to roll back the reserved quota; if rollback itself fails, the quota remains conservatively consumed.
+- **Hunter quota handling:** Hunter's documented `429` usage-limit response pauses further prechecks in shared Redis for 32 days, conservatively spanning a monthly reset because the API response does not provide a reset timestamp. Cached results remain usable during the pause. The contact flow does not depend on Hunter.
 
 ## Cross-origin policy
 
-The app does not expose a cross-origin API. Browser `connect-src` permits only the same origin and EmailJS API; the GitHub API is called only from the server. Fonts are limited to Google Fonts hosts in the relevant CSP directives.
+The app does not enable cross-origin API access. Browser `connect-src` permits only the same origin; GitHub and Resend are called from the server. Fonts are limited to Google Fonts hosts in the relevant CSP directives.

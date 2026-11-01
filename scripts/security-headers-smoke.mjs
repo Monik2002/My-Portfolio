@@ -16,7 +16,14 @@ const nextCli = resolve("node_modules", "next", "dist", "bin", "next");
 const server = spawn(
   process.execPath,
   [nextCli, "start", "--hostname", "127.0.0.1", "--port", String(port)],
-  { stdio: "inherit", env: { ...process.env, PORT: String(port) } }
+  {
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      PORT: String(port),
+      HUNTER_API_KEY: "",
+    },
+  }
 );
 
 async function waitForServer() {
@@ -99,6 +106,58 @@ try {
     /<h1(?:\s[^>]*)?>Contact Me!<\/h1>/,
     "contact page should have a semantic page heading"
   );
+
+  const invalidVerification = await fetch(
+    new URL("/api/contact/verification", baseUrl),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "not-an-email" }),
+    }
+  );
+  assert.equal(invalidVerification.status, 400, "verification should validate email");
+
+  const skippedEmailCheck = await fetch(
+    new URL("/api/contact/email-check", baseUrl),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "sender@example.com" }),
+    }
+  );
+  assert.equal(
+    skippedEmailCheck.status,
+    200,
+    "contact email check should fail open when Hunter is not configured"
+  );
+  assert.deepEqual(await skippedEmailCheck.json(), { status: "skipped" });
+
+  const invalidConfirmation = await fetch(
+    new URL("/api/contact/verification/confirm", baseUrl),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "not-an-email", code: "123456" }),
+    }
+  );
+  assert.equal(invalidConfirmation.status, 400, "confirmation should validate input");
+
+  const unverifiedContact = await fetch(new URL("/api/contact", baseUrl), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: "Test Sender",
+      email: "sender@example.com",
+      subject: "Test",
+      message: "Must not send without verification.",
+    }),
+  });
+  assert.equal(
+    unverifiedContact.status,
+    403,
+    "contact submission should require an email verification token"
+  );
+
   const footerHtml = await (await fetch(baseUrl)).text();
   assert.ok(
     footerHtml.includes('alt="LinkedIn"'),
