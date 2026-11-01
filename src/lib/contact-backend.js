@@ -4,6 +4,7 @@ import { createHmac, randomBytes, randomInt } from "node:crypto";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { isValidContactEmail } from "./contact-validation";
+export { sendContactEmail } from "./contact-email-delivery";
 
 let redis;
 let rateLimiters;
@@ -81,45 +82,11 @@ export function isContactEmailConfigured({ requireRecipient = false } = {}) {
 export function logContactError(message, error) {
   const detail = {
     name: error instanceof Error && error.name ? error.name : "UnknownError",
+    ...(typeof error?.provider === "string" ? { provider: error.provider } : {}),
     ...(Number.isInteger(error?.status) ? { status: error.status } : {}),
+    ...(typeof error?.code === "string" ? { code: error.code } : {}),
   };
   console.error(message, detail);
-}
-
-export async function sendContactEmail({
-  to,
-  subject,
-  text,
-  replyTo,
-} = {}) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.CONTACT_FROM_EMAIL;
-  if (!apiKey || !from) {
-    throw new Error("Resend is not configured.");
-  }
-
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to,
-      subject,
-      text,
-      ...(replyTo ? { reply_to: replyTo } : {}),
-    }),
-    signal: AbortSignal.timeout(10_000),
-  });
-
-  if (!response.ok) {
-    const error = new Error(`Resend returned HTTP ${response.status}.`);
-    error.name = "ResendHttpError";
-    error.status = response.status;
-    throw error;
-  }
 }
 
 export const CONSUME_VERIFICATION_CODE_SCRIPT = `

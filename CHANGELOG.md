@@ -14,4 +14,5 @@
 - Added featured-project fallback and retry controls for GitHub API rate-limit failures.
 - Added Vercel Speed Insights for real-user performance monitoring.
 - Replaced the public EmailJS contact flow with server-side Resend delivery, email OTP verification, and Upstash-backed two-per-day sender quotas.
+- Added an optional server-side EmailJS fallback for explicit Resend quota exhaustion without changing OTP or sender quota enforcement.
 - Removed Vite and React 18-only UI dependencies; updated the runtime requirement to Node.js 22.13+ or 24+.

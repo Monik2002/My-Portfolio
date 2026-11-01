@@ -39,6 +39,13 @@ export async function POST(request) {
   }
 
   const { name, email, subject, message } = validation.value;
+  const emailText = [
+    `From: ${name}`,
+    `Email: ${email}`,
+    `Subject: ${subject}`,
+    "",
+    message,
+  ].join("\n");
   const verificationToken =
     typeof body.verificationToken === "string" ? body.verificationToken : "";
   if (!verificationToken) {
@@ -93,13 +100,15 @@ export async function POST(request) {
       to: process.env.CONTACT_RECIPIENT_EMAIL,
       replyTo: email,
       subject: `Portfolio contact: ${subject}`,
-      text: [
-        `From: ${name}`,
-        `Email: ${email}`,
-        `Subject: ${subject}`,
-        "",
-        message,
-      ].join("\n"),
+      text: emailText,
+      emailJsType: "contact",
+      emailJsTemplateParams: {
+        from_name: name,
+        user_name: name,
+        user_subject: subject,
+        message: emailText,
+        reply_to: email,
+      },
     });
   } catch (error) {
     try {
@@ -110,7 +119,7 @@ export async function POST(request) {
         rollbackError
       );
     }
-    logContactError("Resend contact delivery failed.", error);
+    logContactError("Contact message email delivery failed.", error);
     return jsonError(
       "Could not send your message. Please request a new verification code and try again.",
       502

@@ -24,12 +24,13 @@ _Updated 2026-11-01._
 
 `RootLayout` → `SiteProviders` (theme and toast context) → welcome overlay, `Navigation`, route content, and `Footer`. Route content is passed through the server layout rather than imported into a client shell.
 
-The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form verifies mailbox access through an OTP flow and submits to same-origin Route Handlers; Resend sends mail using a server-only API key, while Upstash Redis stores short-lived verification state and atomic daily contact quotas.
+The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form verifies mailbox access through an OTP flow and submits to same-origin Route Handlers; Resend is primary and optional server-side EmailJS fallback is used only for explicit Resend daily/monthly quota errors. Upstash Redis stores short-lived verification state and atomic daily contact quotas.
 
 ## External integrations and dependencies
 
 - GitHub REST API: `https://api.github.com/users/Monik2002/repos` via `src/app/api/projects/route.js`. `GITHUB_TOKEN` is optional and server-only; without it, the public unauthenticated rate limit still applies.
 - Resend REST API: server-side verification and contact-message delivery.
+- EmailJS REST API: optional server-side fallback after explicit Resend quota errors; template IDs and credentials are configured only in server environment variables.
 - Upstash Redis and Ratelimit: cross-instance contact throttles, one-time verification state, and atomic per-email daily quotas.
 - Google Fonts CSS/font files: Inter and IBM Plex Mono.
 - The welcome screen uses a small CSS animation and session storage to display once per browser tab session; reduced-motion preferences skip it.
@@ -41,5 +42,5 @@ Other dependencies are listed in `package.json`; Dependabot and `npm audit` moni
 
 - Do not move browser-only code into server execution.
 - Keep server components as the default; limit client boundaries to actual interactivity.
-- Resend and Upstash credentials are private server-only environment variables.
-- The shared GitHub cache contains only public repository data. Contact Redis keys contain HMAC-derived identifiers and short-lived verification state; message contents are sent to Resend and not persisted by the app. Theme preference is the only app value stored in browser local storage. See [security model](./security.md) and [API inventory](./api.md).
+- Resend, EmailJS, and Upstash credentials are private server-only environment variables.
+- The shared GitHub cache contains only public repository data. Contact Redis keys contain HMAC-derived identifiers and short-lived verification state; message contents are sent to a configured email provider and not persisted by the app. Theme preference is the only app value stored in browser local storage. See [security model](./security.md) and [API inventory](./api.md).

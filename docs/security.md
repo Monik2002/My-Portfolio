@@ -16,15 +16,16 @@ The site has no user account system or Server Action. It has a read-only GitHub 
 | CSRF | Low | Contact APIs accept JSON POSTs and no cookies authorize the caller; verification tokens are returned only to the same-origin browser. Cross-origin API access is not enabled. |
 | SQL/NoSQL injection | Low | Contact Redis uses fixed Lua scripts and HMAC-derived keys; user values are passed as script arguments, never interpolated into script source. |
 | SSRF | Low | The projects Route Handler uses a fixed GitHub API URL and accepts no caller-supplied URL. |
-| API abuse / denial of service | Medium | The public read-only GitHub route caches responses for one hour; contact code requests and submissions have shared Upstash limits by HMAC-hashed IP/email. Provider quotas also bound Resend traffic. |
+| API abuse / denial of service | Medium | The public read-only GitHub route caches responses for one hour; contact code requests and submissions have shared Upstash limits by HMAC-hashed IP/email. Resend and EmailJS provider quotas also bound outbound email. |
 | Contact spam | Medium | A sender must receive an OTP, verification tokens are one-time, code attempts are limited, and two messages per normalized email are reserved atomically per UTC day. Gmail dot/plus aliases share a quota. |
-| Secret leakage | Low | `GITHUB_TOKEN`, `RESEND_API_KEY`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Contact recipient/sender configuration must not use a `NEXT_PUBLIC_` prefix. |
+| Secret leakage | Low | `GITHUB_TOKEN`, `RESEND_API_KEY`, `EMAILJS_PRIVATE_KEY`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Contact recipient/sender configuration and all EmailJS settings must not use a `NEXT_PUBLIC_` prefix. |
 | Dependency/supply-chain compromise | Medium | Lockfile, `npm ci`, audit gate, Dependabot, CodeQL, least-permission CI. GitHub Actions use major-version tags rather than immutable SHAs; review updates. |
 | Open redirect | Low | No redirect endpoint exists. GitHub repository URLs are constrained to the expected owner; demo URLs accept only HTTP(S) and disallow credentials. |
 | Clickjacking | Low | `X-Frame-Options: DENY` and CSP `frame-ancestors 'none'`. |
 | Security misconfiguration | Medium | Security headers are centralized and tested. HSTS is deliberately gated on verified production HTTPS; review Vercel settings before enabling. |
 | Cache poisoning / unintended caching | Low | Only public GitHub repository data is cached for one hour, with stale revalidation; responses are not user-specific. Browser storage contains only the non-sensitive theme preference; the one-time contact token remains in component state. |
 | Unauthorized server functionality | Low | Contact endpoints are unauthenticated but require a short-lived email-verification token; Redis is fail-closed and message quotas are enforced server-side. Protect future side-effecting handlers independently. |
+| Direct use of EmailJS outside the portfolio | Medium | EmailJS supports public-key browser requests. Keep its rotated public key and template IDs out of the client bundle; the Upstash two-message cap applies to submissions through this portfolio API, not direct requests to EmailJS if those identifiers are exposed. |
 | Compromised third-party scripts | Low | No third-party script is loaded from a CDN. Font CSS is fetched from Google; runtime libraries are bundled from npm. |
 
 ## Browser and HTTP controls
@@ -38,14 +39,14 @@ The site has no user account system or Server Action. It has a read-only GitHub 
 - `src/app/api/projects/route.js` calls only GitHub's fixed public repositories endpoint, keeps optional `GITHUB_TOKEN` server-side, and caches successful responses for one hour.
 - `src/lib/github-projects.js` validates response shape, repository ownership/URLs, dates, counts, and HTTP(S) demo URLs before display.
 - React renders descriptions as text; do not introduce unsafe HTML rendering.
-- Contact fields are validated again in the server Route Handler. Verification codes expire after 10 minutes, can be attempted at most five times per 15-minute window, and successful verification tokens expire after 15 minutes. A Redis Lua script atomically consumes the token and reserves the sender's daily message slot before Resend is called.
-- Redis keys use HMAC-derived email/IP identifiers and store only a hash of each OTP and verification token. Mail contents are sent to Resend and are not written to application logs or Redis.
+- Contact fields are validated again in the server Route Handler. Verification codes expire after 10 minutes, can be attempted at most five times per 15-minute window, and successful verification tokens expire after 15 minutes. A Redis Lua script atomically consumes the token and reserves the sender's daily message slot before delivery is attempted.
+- Resend is the primary sender. The server calls EmailJS only when Resend returns an explicit daily/monthly quota error; network errors and other failures are not retried through another provider. Redis keys use HMAC-derived email/IP identifiers and store only a hash of each OTP and verification token. Mail contents are not written to application logs or Redis.
 - Errors shown to visitors are generic. Logs must not include form values or credentials.
 - The projects endpoint is a public read-only GET with no user input or request body; it returns generic errors and does not expose the upstream error payload or token. Reassess abuse controls if it gains caller-controlled inputs or side effects.
 
 ## Environment and secret management
 
-`GITHUB_TOKEN` is optional and server-only; add it to Vercel Preview/Production environment variables to raise the GitHub API rate limit. Use a fine-grained token with no repository permissions for public repository reads, set an expiry, and never prefix it with `NEXT_PUBLIC_`. Contact delivery requires server-only `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` values. Verify the sending domain in Resend and configure variables separately for each Vercel environment.
+`GITHUB_TOKEN` is optional and server-only; add it to Vercel Preview/Production environment variables to raise the GitHub API rate limit. Use a fine-grained token with no repository permissions for public repository reads, set an expiry, and never prefix it with `NEXT_PUBLIC_`. Contact delivery requires server-only `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` values. Optional fallback delivery additionally requires the server-only EmailJS service/template IDs, public key, and private key. Verify the sending domain in Resend and configure variables separately for each Vercel environment.
 
 ## Dependency and release security
 
@@ -59,7 +60,8 @@ Use the private process in [SECURITY.md](../SECURITY.md). For exposed private cr
 
 ## Known residual risks
 
-- Contact delivery depends on the Resend domain being verified and both Resend/Upstash staying within their free-tier limits; if Redis is unavailable, contact APIs intentionally fail closed.
+- Contact delivery depends on Upstash availability and at least one configured provider having available quota; if Redis is unavailable, contact APIs intentionally fail closed. EmailJS is not an unlimited backup and should never be reconnected from browser code.
+- The two-message daily limit is enforced on the portfolio's contact API. EmailJS's public REST interface means this site-level limit cannot govern independent direct calls if its public key and template IDs are exposed; rotate any legacy public key before enabling the fallback.
 - The production HTTPS endpoint is verified and Vercel's edge supplies HSTS; the app-level `ENABLE_HSTS` flag remains off.
 - GitHub repository-level Secret Scanning and push protection require repository-owner settings; they cannot be enabled from the local project files.
 - `GITHUB_TOKEN`, Resend, and Upstash environment values must be configured separately in Vercel; no credentials are committed to the repository.

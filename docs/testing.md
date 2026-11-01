@@ -7,7 +7,7 @@ _Updated 2026-11-01._
 - `npm run lint`: ESLint over JavaScript/JSX.
 - `npm run typecheck`: TypeScript checks for `next.config.ts` and `src/proxy.ts`; application components remain JavaScript.
 - `npm run build`: production Next.js build and framework type validation.
-- `node --test`: tests for contact-form validation and quotas, server-side GitHub token handling, response caching, generic upstream errors, repository normalization, curated project fallbacks, safe URLs, React text escaping, and one-time/reduced-motion welcome behavior.
+- `node --test`: tests for contact-form validation and quotas, EmailJS fallback selection on explicit Resend quota errors, server-side GitHub token handling, response caching, generic upstream errors, repository normalization, curated project fallbacks, safe URLs, React text escaping, and one-time/reduced-motion welcome behavior.
 - `node scripts/security-headers-smoke.mjs`: starts the production server and checks all four route responses, CSP nonce propagation, anti-framing, MIME/referrer/opener headers, and removal of the powered-by header. HSTS is asserted only when explicitly enabled after HTTPS verification.
 - `npm audit --audit-level=high`: dependency advisory gate.
 

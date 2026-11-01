@@ -18,11 +18,11 @@ The application exposes a read-only GitHub Route Handler and contact form Route 
 
 ## Verified contact form
 
-- **Request code:** `POST /api/contact/verification` accepts an email address and honeypot. It sends a cryptographically random six-digit code through Resend; the HMAC of the code is stored in Upstash Redis for 10 minutes.
+- **Request code:** `POST /api/contact/verification` accepts an email address and honeypot. It sends a cryptographically random six-digit code through Resend, falling back to EmailJS only for Resend daily/monthly quota errors; the HMAC of the code is stored in Upstash Redis for 10 minutes.
 - **Verify code:** `POST /api/contact/verification/confirm` accepts the email and code. Redis atomically consumes the code and stores a hash of a random one-time submission token for 15 minutes.
-- **Submit:** `POST /api/contact` accepts the name, email, subject, message, honeypot, and one-time token. It validates all fields, atomically reserves a send against the two-message daily quota, and sends plain text through Resend with the verified email as `reply_to`.
+- **Submit:** `POST /api/contact` accepts the name, email, subject, message, honeypot, and one-time token. It validates all fields, atomically reserves a send against the two-message daily quota, and sends plain text through Resend with the verified email as `reply_to`; EmailJS is attempted only for explicit Resend daily/monthly quota errors.
 - **Limits:** verification-code sends are limited to 3 per normalized email and 5 per IP per 15 minutes; code attempts are limited to 5 per email and 10 per IP per 15 minutes; message submissions are limited to 10 per IP per 15 minutes. The persistent per-email quota resets at UTC midnight. Gmail dot/plus aliases are grouped; other addresses are case-insensitive.
-- **Secrets/data:** `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Redis keys contain HMAC-derived identifiers, not raw email addresses. Never log codes, tokens, message contents, or credentials.
+- **Secrets/data:** `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, optional `EMAILJS_*` settings, and Upstash credentials are server-only. Redis keys contain HMAC-derived identifiers, not raw email addresses. Never log codes, tokens, message contents, or credentials.
 - **Failure handling:** requests fail closed if Redis is unavailable. A failed Resend delivery attempts to roll back the reserved quota; if rollback itself fails, the quota remains conservatively consumed.
 
 ## Cross-origin policy

@@ -12,7 +12,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-The development server runs on `http://localhost:3000`. Contact form configuration is optional for viewing the site. To exercise contact email locally, use a verified Resend sender domain, a Resend API key, the contact recipient address, and Upstash Redis REST credentials from `.env.example`. These values are server-only; never use a `NEXT_PUBLIC_` prefix. `ENABLE_HSTS` is a server-side deployment flag and should remain false locally.
+The development server runs on `http://localhost:3000`. Contact form configuration is optional for viewing the site. To exercise contact email locally, use a verified Resend sender domain, a Resend API key, the contact recipient address, and Upstash Redis REST credentials from `.env.example`. Optional EmailJS fallback testing also requires the service, contact/verification templates, and server-only credentials. These values must not use a `NEXT_PUBLIC_` prefix. `ENABLE_HSTS` is a server-side deployment flag and should remain false locally.
 
 ## Commands
 

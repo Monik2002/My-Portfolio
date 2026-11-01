@@ -74,6 +74,11 @@ export async function POST(request) {
       to: email,
       subject: "Verify your email for Monik's portfolio",
       text: `Your verification code is ${verificationCode}. It expires in 10 minutes. If you did not request this, you can ignore this email.`,
+      emailJsType: "verification",
+      emailJsTemplateParams: {
+        to_email: email,
+        verification_code: verificationCode,
+      },
     });
   } catch (error) {
     try {
@@ -84,7 +89,7 @@ export async function POST(request) {
         cleanupError
       );
     }
-    logContactError("Resend verification delivery failed.", error);
+    logContactError("Contact verification email delivery failed.", error);
     return jsonError(
       "Could not send a verification code. Please try again later.",
       502

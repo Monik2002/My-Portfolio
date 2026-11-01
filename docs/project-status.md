@@ -20,12 +20,13 @@ _Updated 2026-11-01._
 - Added a server-side GitHub repositories endpoint with optional `GITHUB_TOKEN`, one-hour response caching, and tests for authenticated/unauthenticated requests and upstream rate-limit failures.
 - Added Vercel Speed Insights integration and updated the supported Node.js engine range to remove end-of-life Node 20.
 - Replaced browser EmailJS delivery with a Resend/Upstash email-verification flow and a server-enforced two-messages-per-verified-email daily quota.
+- Added optional server-side EmailJS fallback delivery for explicit Resend daily/monthly quota errors; OTP verification and the daily sender quota remain enforced by the same API.
 
 ## In progress / owner actions
 
 - Add an expiring, no-repository-permissions GitHub fine-grained token as the Vercel `GITHUB_TOKEN` variable to enable the higher authenticated rate limit.
 - Verify `monikportfolio.tech` in Resend, add its requested DNS records, and add the Resend, contact-recipient, and Upstash variables to Vercel Preview/Production before enabling live contact delivery.
-- Disable the old EmailJS contact template so existing deployments or direct public-key requests cannot bypass the new server-side quota.
+- Configure the EmailJS verification template and server-only Vercel fallback variables; keep EmailJS disconnected from browser code.
 - Change Vercel's project Node.js default from discontinued 20.x to 24.x; the existing production override is 26.x.
 - Deploy the Speed Insights integration and confirm events appear in the Vercel dashboard.
 
@@ -42,7 +43,7 @@ _Updated 2026-11-01._
 
 ## Next priorities
 
-1. Configure the Resend sending domain, Vercel server-only environment variables, and disable the legacy EmailJS template; then test OTP and daily-limit behavior on the deployed site.
+1. Configure the Resend sending domain and the optional EmailJS fallback templates/variables in Vercel; then test OTP, fallback delivery, and daily-limit behavior on the deployed site.
 2. Review the moderate development-tooling audit findings and upgrade through compatible upstream releases.
 3. Verify CodeQL runs after changes to the security workflow or source.
 4. Verify Vercel TLS, then enable HSTS only if the existing edge header changes.
