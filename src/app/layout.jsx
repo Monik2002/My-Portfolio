@@ -1,5 +1,6 @@
 import "../index.css";
 import "../App.css";
+import { Analytics } from "@vercel/analytics/next";
 import PropTypes from "prop-types";
 import Footer from "../components/Footer";
 import Navigation from "../components/Navigation";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }) {
           </div>
           <Footer />
         </SiteProviders>
+        <Analytics />
       </body>
     </html>
   );

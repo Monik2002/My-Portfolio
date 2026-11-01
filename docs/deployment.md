@@ -8,6 +8,8 @@ The repository is configured for a Next.js deployment on Vercel. No `vercel.json
 
 The canonical origin and sitemap/robots URLs use the repository's configured homepage, `https://monikanchan-chatterjee-portfolio.vercel.app`. The live site returned HTTP 200 over HTTPS on 2026-11-01; verify that this remains the primary production domain if the Vercel domain changes.
 
+Vercel Web Analytics is enabled for the project and integrated in `src/app/layout.jsx`. It records page views after deployment. The Hobby plan includes up to 50,000 events per month; Vercel pauses collection after its free allowance is exceeded. Review current [Web Analytics limits and pricing](https://vercel.com/docs/analytics/limits-and-pricing) in Vercel before changing plans.
+
 Configure the `NEXT_PUBLIC_EMAILJS_*` values separately for Preview and Production if the contact form should work in those environments. They are browser-visible identifiers, not secrets. Do not add private credentials under a `NEXT_PUBLIC_` prefix.
 
 To raise the Projects page's GitHub API quota, add an expiring fine-grained personal access token as the server-only `GITHUB_TOKEN` environment variable in Vercel Preview and Production. Public repository reads need no repository permissions. GitHub tokens and Vercel environment variables are available without purchasing a separate service; Vercel usage remains subject to the project's plan limits. Never paste the token into chat or commit it to the repository.
