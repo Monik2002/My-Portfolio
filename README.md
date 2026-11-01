@@ -21,7 +21,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-The site is available at `http://localhost:3000`. Contact email delivery requires server-only Resend and Upstash credentials; see [development setup](./docs/development.md).
+The site is available at `https://monikanchan-chatterjee-portfolio.vercel.app/`. Contact email delivery requires server-only Resend and Upstash credentials; see [development setup](./docs/development.md).
 
 ## Routes
 
