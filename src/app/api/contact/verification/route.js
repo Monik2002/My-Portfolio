@@ -46,11 +46,8 @@ export async function POST(request) {
     services = getContactServices();
     emailHash = hashContactValue(normalizeEmailForContactLimit(email));
     const ipHash = getClientIpHash(request);
-    const [ipLimit, emailLimit] = await Promise.all([
-      services.rateLimiters.verificationIp.limit(ipHash),
-      services.rateLimiters.verificationEmail.limit(emailHash),
-    ]);
-    if (!ipLimit.success || !emailLimit.success) {
+    const ipLimit = await services.rateLimiters.verificationIp.limit(ipHash);
+    if (!ipLimit.success) {
       return jsonError("Too many code requests. Please try again later.", 429);
     }
   } catch (error) {
@@ -68,6 +65,20 @@ export async function POST(request) {
   try {
     const { date, expiresInSeconds } = getDailyContactQuotaWindow();
     dailyQuotaKey = `contact:verification:sent:${emailHash}:${date}`;
+    const sentCount = Number((await services.redis.get(dailyQuotaKey)) || 0);
+    if (sentCount >= 2) {
+      return jsonError(
+        "This email address has reached its limit of two verification codes today.",
+        429
+      );
+    }
+
+    const emailLimit =
+      await services.rateLimiters.verificationEmail.limit(emailHash);
+    if (!emailLimit.success) {
+      return jsonError("Too many code requests. Please try again later.", 429);
+    }
+
     const reserved = await services.redis
       .createScript(RESERVE_VERIFICATION_EMAIL_SCRIPT)
       .eval([dailyQuotaKey], [String(expiresInSeconds)]);
