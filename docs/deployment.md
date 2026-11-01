@@ -6,7 +6,7 @@ _Updated 2026-11-01._
 
 The repository is configured for a Next.js deployment on Vercel. No `vercel.json` rewrite is needed; the former SPA catch-all rewrite was removed so App Router paths resolve normally. Use Node.js 20.19+, 22.13+, or 24+ (CI uses Node 24).
 
-The canonical origin and sitemap/robots URLs use the repository's configured homepage, `https://monikanchan-chatterjee-portfolio.vercel.app`. The live site returned HTTP 200 over HTTPS on 2026-11-01; verify that this remains the primary production domain if the Vercel domain changes.
+The canonical origin and sitemap/robots URLs use `https://monikportfolio.tech`. The custom domain returned HTTP 200 over HTTPS on 2026-11-01, and `www.monikportfolio.tech` permanently redirects to the apex domain. The stable `vercel.app` URL remains available as a fallback; a redirect from an expired custom domain cannot be guaranteed.
 
 Vercel Web Analytics is enabled for the project and integrated in `src/app/layout.jsx`. It records page views after deployment. The Hobby plan includes up to 50,000 events per month; Vercel pauses collection after its free allowance is exceeded. Review current [Web Analytics limits and pricing](https://vercel.com/docs/analytics/limits-and-pricing) in Vercel before changing plans.
 

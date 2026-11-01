@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { spawn } from "node:child_process";
+import { SITE_ORIGIN } from "../src/lib/site-metadata.js";
 
 const buildId = resolve(".next", "BUILD_ID");
 if (!existsSync(buildId)) {
@@ -62,7 +63,7 @@ try {
     );
     assert.ok(
       html.includes(
-        `rel="canonical" href="https://monikanchan-chatterjee-portfolio.vercel.app${route === "/" ? "" : route}"`
+        `rel="canonical" href="${SITE_ORIGIN}${route === "/" ? "" : route}"`
       ),
       `${route} should have a canonical URL`
     );
@@ -123,7 +124,7 @@ try {
     const sitemapPath = route === "/" ? "" : route;
     assert.ok(
       sitemapXml.includes(
-        `<loc>https://monikanchan-chatterjee-portfolio.vercel.app${sitemapPath}</loc>`
+        `<loc>${SITE_ORIGIN}${sitemapPath}</loc>`
       ),
       `sitemap should include ${route}`
     );
@@ -135,7 +136,7 @@ try {
   assert.ok(robotsTxt.includes("Allow: /"), "robots.txt should allow public pages");
   assert.ok(
     robotsTxt.includes(
-      "Sitemap: https://monikanchan-chatterjee-portfolio.vercel.app/sitemap.xml"
+      `Sitemap: ${SITE_ORIGIN}/sitemap.xml`
     ),
     "robots.txt should point to the deployed sitemap"
   );
