@@ -4,16 +4,17 @@ _Updated 2026-11-01._
 
 ## Application-owned endpoints
 
-There are no Next.js Route Handlers, Server Actions, application API routes, authentication endpoints, or database endpoints. Consequently, the app has no app-owned HTTP methods, request schemas, or session/CSRF policy. Do not add an endpoint without server-side validation, rate limits, body-size controls, generic errors, and security tests.
+The application exposes one read-only Next.js Route Handler. There are no Server Actions, authentication endpoints, or database endpoints.
 
 ## GitHub repositories
 
-- **Request:** browser `GET https://api.github.com/users/Monik2002/repos` from `src/portfolio/Projects.jsx`.
-- **Authentication:** none; public unauthenticated API.
+- **Request:** browser `GET /api/projects`; `src/app/api/projects/route.js` requests `https://api.github.com/users/Monik2002/repos?per_page=100` from the server.
+- **Authentication:** optional server-only `GITHUB_TOKEN` sent as a bearer token. A token is not required for local development; never expose it with a `NEXT_PUBLIC_` prefix.
 - **Response:** expected GitHub repository array; only public fields used are id, name, description, fork, star count, creation time, HTML URL, and homepage.
 - **Validation:** `src/lib/github-projects.js` verifies the array and each selected field, allows repository links only for `github.com/Monik2002/<repo>`, and allows demo URLs only over HTTP(S) without embedded credentials. Invalid records are discarded; invalid response shapes fail visibly in the page error path.
-- **Limits/errors:** GitHub applies its public unauthenticated rate limit. The projects UI logs the failure and shows a generic toast; no private data is involved.
-- **Caching:** repository data is not persisted; each page visit fetches fresh public data. No server cache is used.
+- **Limits/errors:** an authenticated token increases GitHub's rate limit; unauthenticated requests remain subject to the public limit. Upstream errors are logged server-side and returned as generic errors for the existing curated-project fallback.
+- **Caching:** successful repository responses are cached for one hour and may be served stale for up to one day while revalidating. Error responses are not cached.
+- **Abuse surface:** the route is a public, read-only GET with no caller-supplied URL, request body, or user-specific data. Keep the upstream URL fixed and do not return the token or GitHub error payloads.
 
 ## EmailJS contact form
 
@@ -25,4 +26,4 @@ There are no Next.js Route Handlers, Server Actions, application API routes, aut
 
 ## Cross-origin policy
 
-The app does not expose a cross-origin API. Browser `connect-src` permits only the same origin, GitHub API, and EmailJS API; fonts are limited to Google Fonts hosts in the relevant CSP directives.
+The app does not expose a cross-origin API. Browser `connect-src` permits only the same origin and EmailJS API; the GitHub API is called only from the server. Fonts are limited to Google Fonts hosts in the relevant CSP directives.

@@ -10,6 +10,8 @@ The canonical origin and sitemap/robots URLs use the repository's configured hom
 
 Configure the `NEXT_PUBLIC_EMAILJS_*` values separately for Preview and Production if the contact form should work in those environments. They are browser-visible identifiers, not secrets. Do not add private credentials under a `NEXT_PUBLIC_` prefix.
 
+To raise the Projects page's GitHub API quota, add an expiring fine-grained personal access token as the server-only `GITHUB_TOKEN` environment variable in Vercel Preview and Production. Public repository reads need no repository permissions. GitHub tokens and Vercel environment variables are available without purchasing a separate service; Vercel usage remains subject to the project's plan limits. Never paste the token into chat or commit it to the repository.
+
 ## Build and verification
 
 Vercel should install from `package-lock.json`, run `npm run build`, and serve the Next.js production output. CI additionally runs lint, TypeScript checks, dependency audit, unit tests, and a production HTTP smoke test. Do not deploy when a required release check fails.

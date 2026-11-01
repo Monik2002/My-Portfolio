@@ -24,11 +24,11 @@ _Updated 2026-11-01._
 
 `RootLayout` → `SiteProviders` (theme and toast context) → welcome overlay, `Navigation`, route content, and `Footer`. Route content is passed through the server layout rather than imported into a client shell.
 
-The projects page fetches public repositories from GitHub in the browser and normalizes the response before rendering. If GitHub is rate-limited or unavailable, it shows a curated set of verified owner projects and an explicit retry/profile link instead of an empty page. The contact form submits directly from the browser to EmailJS using public identifiers. No application server API handles either integration.
+The projects page fetches repositories from the same-origin `/api/projects` Route Handler, which calls GitHub server-side using the optional `GITHUB_TOKEN` environment variable and caches successful responses for one hour. The token is never exposed to the browser. The client normalizes the response and shows curated projects plus an explicit retry/profile link if GitHub is unavailable. The contact form submits directly from the browser to EmailJS using public identifiers.
 
 ## External integrations and dependencies
 
-- GitHub REST API: `https://api.github.com/users/Monik2002/repos` (unauthenticated public requests are rate-limited; curated projects provide the fallback).
+- GitHub REST API: `https://api.github.com/users/Monik2002/repos` via `src/app/api/projects/route.js`. `GITHUB_TOKEN` is optional and server-only; without it, the public unauthenticated rate limit still applies.
 - EmailJS browser SDK: contact-form delivery.
 - Google Fonts CSS/font files: Inter and IBM Plex Mono.
 - The welcome screen uses a small CSS animation and session storage to display once per browser tab session; reduced-motion preferences skip it.
@@ -41,4 +41,4 @@ Other dependencies are listed in `package.json`; Dependabot and `npm audit` moni
 - Do not move browser-only code into server execution.
 - Keep server components as the default; limit client boundaries to actual interactivity.
 - EmailJS identifiers are public browser configuration, not private credentials.
-- No shared server-side cache or private user data exists. Theme preference and a contact cooldown timestamp are the only app values stored in browser local storage. See [security model](./security.md) and [API inventory](./api.md).
+- The shared server-side cache contains only public GitHub repository data. No private user data is stored. Theme preference and a contact cooldown timestamp are the only app values stored in browser local storage. See [security model](./security.md) and [API inventory](./api.md).

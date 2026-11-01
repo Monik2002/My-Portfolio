@@ -9,7 +9,6 @@ function createContentSecurityPolicy(nonce: string) {
   const connectSources = [
     "'self'",
     "https://api.emailjs.com",
-    "https://api.github.com",
     ...(isDevelopment ? ["ws://localhost:*", "ws://127.0.0.1:*"] : []),
   ];
 

@@ -355,10 +355,7 @@ const Projects = () => {
 
     const fetchProjects = async () => {
       try {
-        const response = await fetch(
-          "https://api.github.com/users/Monik2002/repos",
-          { headers: { Accept: "application/vnd.github+json" } }
-        );
+        const response = await fetch("/api/projects");
         if (!response.ok) {
           throw new Error(`GitHub returned HTTP ${response.status}.`);
         }
