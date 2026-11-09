@@ -18,6 +18,8 @@ Inter is the base/heading face and IBM Plex Mono is the monospace face, loaded f
 
 Existing CSS switches at 700px and 1280px. Check navigation, cards, contact form, and footer on narrow and desktop viewports after shared styling changes.
 
+Tailwind CSS 4 uses `@tailwindcss/postcss`; `src/index.css` explicitly loads the JavaScript theme configuration and retains class-based dark mode. Tailwind 4 requires Safari 16.4+, Chrome 111+, or Firefox 128+.
+
 ## Component, animation, and accessibility conventions
 
 - Use shared components in `src/components/` and keep route rendering in `src/app/`.

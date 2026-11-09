@@ -4,7 +4,7 @@ _Updated 2026-11-01._
 
 ## Prerequisites and setup
 
-Use Node.js 20.19+, 22.13+, or 24+ and npm. The `.npmrc` enforces the declared Node engine.
+Use Node.js 22.13+ or 24+ and npm. The `.npmrc` enforces the declared Node engine.
 
 ```powershell
 npm ci
@@ -12,7 +12,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-The development server runs on `http://localhost:3000`. Contact form configuration is optional for viewing the site. `.env.example` carries over the existing public `NEXT_PUBLIC_EMAILJS_*` identifiers; verify them against the EmailJS dashboard before using the form. These values are public by design, not secrets. `ENABLE_HSTS` is a server-side deployment flag and should remain false locally.
+The development server runs on `http://localhost:3000`. Contact form configuration is optional for viewing the site. To exercise contact email locally, use a verified Resend sender domain, a Resend API key, the contact recipient address, and Upstash Redis REST credentials from `.env.example`. Optional EmailJS fallback testing also requires the service, contact/verification templates, and server-only credentials. These values must not use a `NEXT_PUBLIC_` prefix. `ENABLE_HSTS` is a server-side deployment flag and should remain false locally.
 
 ## Commands
 

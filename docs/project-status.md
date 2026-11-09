@@ -17,31 +17,34 @@ _Updated 2026-11-01._
 - Verified the deployed Vercel origin from the GitHub repository homepage; canonical URLs, sitemap, and robots directives use that origin.
 - Corrected home-page project cards to link only to verified owner repositories; the GitHub project list omits blank descriptions and displays available language metadata.
 - Added a curated-project fallback and retry/profile links when GitHub's public API rate limit prevents loading the full project list.
+- Added a server-side GitHub repositories endpoint with optional `GITHUB_TOKEN`, one-hour response caching, and tests for authenticated/unauthenticated requests and upstream rate-limit failures.
+- Added Vercel Speed Insights integration and updated the supported Node.js engine range to remove end-of-life Node 20.
+- Replaced browser EmailJS delivery with a Resend/Upstash email-verification flow and server-enforced daily quotas of two verification emails and two contact messages per normalized email.
+- Added optional server-side EmailJS fallback delivery for explicit Resend daily/monthly quota errors; OTP verification and the daily sender quota remain enforced by the same API.
 
 ## In progress / owner actions
 
-- Run the repository CI workflow on GitHub and review the remaining moderate development-tooling audit findings.
-- Enable GitHub Secret Scanning and push protection in repository settings if available.
-- Recheck the live Vercel deployment after publishing these changes.
-- Set EmailJS browser identifiers in Preview/Production and enforce allowed origins, quotas, and provider-side abuse protection.
-- Verify contact form delivery and responsive behavior in the deployed environment.
+- Verify the Tailwind 4 migration in a Vercel preview before merging. The separate Netlify preview integration uses Node 18 and fails the project's Node engine requirement.
+- Add an expiring, no-repository-permissions GitHub fine-grained token as the Vercel `GITHUB_TOKEN` variable to enable the higher authenticated rate limit.
+- Verify `monikportfolio.tech` in Resend, add its requested DNS records, and add the Resend, contact-recipient, and Upstash variables to Vercel Preview/Production before enabling live contact delivery.
+- Configure the EmailJS verification template and server-only Vercel fallback variables; keep EmailJS disconnected from browser code.
+- Change Vercel's project Node.js default from discontinued 20.x to 24.x; the existing production override is 26.x.
+- Deploy the Speed Insights integration and confirm events appear in the Vercel dashboard.
 
 ## Known limitations and accepted risks
 
-- Contact spam friction is client-side and bypassable; no server proxy/rate limiter/CAPTCHA was added.
-- External GitHub API calls use the public unauthenticated rate limit; the Projects page now shows curated projects when that limit is exhausted.
+- Contact APIs require an email OTP and enforce a shared two-message-per-day quota; abuse remains bounded by provider free-tier caps and rate limits.
+- Without `GITHUB_TOKEN`, server-side GitHub API calls still use the unauthenticated rate limit; the Projects page shows curated projects when that limit is exhausted.
 - Inline styles remain allowed by `style-src` to preserve existing UI behavior.
 - GitHub Actions are version-tagged rather than pinned to immutable commit SHAs.
 - Full `npm audit` reports five moderate findings in the ESLint/minimatch development-tooling chain; `npm audit --omit=dev` reports none. Automatic fixes propose an incompatible downgrade, so no forced fix was applied.
-- No application API, authentication, or database exists; adding one requires a new threat model and endpoint tests.
+- There is no user account system or relational database; Upstash Redis stores short-lived verification state and rate-limit counters.
 - The production hostname returned HTTP 200 over HTTPS and Vercel sent `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` on 2026-11-01. The app-level `ENABLE_HSTS` flag is separate; Vercel's edge already supplies HSTS.
-- Vercel settings, GitHub secret-scanning state, and deployment environment values are unverified from this workspace.
+- Deployment environment values are controlled by Vercel and must be configured separately from this repository.
 
 ## Next priorities
 
-1. Review the moderate development-tooling audit findings and upgrade through compatible upstream releases.
-2. Enable GitHub repository-level secret scanning/push protection and verify CodeQL runs.
-3. Configure EmailJS restrictions/quotas and production environment values.
-4. Verify Vercel TLS, then enable HSTS.
-5. Verify contact form delivery on the deployed site.
-6. Confirm the Vercel deployment rebuilt from the updated GitHub branch and verify its generated SEO metadata.
+1. Configure the Resend sending domain and the optional EmailJS fallback templates/variables in Vercel; then test OTP, fallback delivery, and daily-limit behavior on the deployed site.
+2. Review the moderate development-tooling audit findings and upgrade through compatible upstream releases.
+3. Verify CodeQL runs after changes to the security workflow or source.
+4. Verify Vercel TLS, then enable HSTS only if the existing edge header changes.

@@ -10,7 +10,7 @@ A personal portfolio built with Next.js App Router, React, Tailwind CSS, and cus
 
 ## Requirements
 
-- Node.js 20.19+, 22.13+, or 24+
+- Node.js 22.13+ or 24+
 - npm
 
 ## Local setup
@@ -21,7 +21,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-The site is available at `http://localhost:3000`. The example includes the existing public EmailJS identifiers; verify them against the EmailJS dashboard before using the contact form. These values are browser-visible and are not secrets. See [development setup](./docs/development.md).
+The site is available at `https://monikanchan-chatterjee-portfolio.vercel.app/`. Contact email delivery requires server-only Resend and Upstash credentials; see [development setup](./docs/development.md).
 
 ## Routes
 

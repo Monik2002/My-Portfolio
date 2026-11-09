@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Migrated the Tailwind CSS 4 PostCSS integration and preserved the existing class-based dark theme and contact form utility styles.
+
 ## 2026-11-01
 
 - Migrated the portfolio from Vite and React Router to the Next.js App Router while retaining the existing routes and shared UI.
@@ -12,4 +16,7 @@
 - Corrected featured-project ownership links, filtered blank GitHub descriptions, and displayed repository language metadata.
 - Added unit coverage for session-scoped welcome behavior and GitHub project display data.
 - Added featured-project fallback and retry controls for GitHub API rate-limit failures.
-- Removed Vite and React 18-only UI dependencies; updated the runtime requirement to Node.js 20.19+, 22.13+, or 24+.
+- Added Vercel Speed Insights for real-user performance monitoring.
+- Replaced the public EmailJS contact flow with server-side Resend delivery, email OTP verification, and Upstash-backed two-per-day sender quotas.
+- Added an optional server-side EmailJS fallback for explicit Resend quota exhaustion without changing OTP or sender quota enforcement.
+- Removed Vite and React 18-only UI dependencies; updated the runtime requirement to Node.js 22.13+ or 24+.

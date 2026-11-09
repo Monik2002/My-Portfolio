@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { spawn } from "node:child_process";
+import { SITE_ORIGIN } from "../src/lib/site-metadata.js";
 
 const buildId = resolve(".next", "BUILD_ID");
 if (!existsSync(buildId)) {
@@ -15,7 +16,13 @@ const nextCli = resolve("node_modules", "next", "dist", "bin", "next");
 const server = spawn(
   process.execPath,
   [nextCli, "start", "--hostname", "127.0.0.1", "--port", String(port)],
-  { stdio: "inherit", env: { ...process.env, PORT: String(port) } }
+  {
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      PORT: String(port),
+    },
+  }
 );
 
 async function waitForServer() {
@@ -62,7 +69,7 @@ try {
     );
     assert.ok(
       html.includes(
-        `rel="canonical" href="https://monikanchan-chatterjee-portfolio.vercel.app${route === "/" ? "" : route}"`
+        `rel="canonical" href="${SITE_ORIGIN}${route === "/" ? "" : route}"`
       ),
       `${route} should have a canonical URL`
     );
@@ -98,6 +105,43 @@ try {
     /<h1(?:\s[^>]*)?>Contact Me!<\/h1>/,
     "contact page should have a semantic page heading"
   );
+
+  const invalidVerification = await fetch(
+    new URL("/api/contact/verification", baseUrl),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "not-an-email" }),
+    }
+  );
+  assert.equal(invalidVerification.status, 400, "verification should validate email");
+
+  const invalidConfirmation = await fetch(
+    new URL("/api/contact/verification/confirm", baseUrl),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "not-an-email", code: "123456" }),
+    }
+  );
+  assert.equal(invalidConfirmation.status, 400, "confirmation should validate input");
+
+  const unverifiedContact = await fetch(new URL("/api/contact", baseUrl), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: "Test Sender",
+      email: "sender@example.com",
+      subject: "Test",
+      message: "Must not send without verification.",
+    }),
+  });
+  assert.equal(
+    unverifiedContact.status,
+    403,
+    "contact submission should require an email verification token"
+  );
+
   const footerHtml = await (await fetch(baseUrl)).text();
   assert.ok(
     footerHtml.includes('alt="LinkedIn"'),
@@ -123,7 +167,7 @@ try {
     const sitemapPath = route === "/" ? "" : route;
     assert.ok(
       sitemapXml.includes(
-        `<loc>https://monikanchan-chatterjee-portfolio.vercel.app${sitemapPath}</loc>`
+        `<loc>${SITE_ORIGIN}${sitemapPath}</loc>`
       ),
       `sitemap should include ${route}`
     );
@@ -135,7 +179,7 @@ try {
   assert.ok(robotsTxt.includes("Allow: /"), "robots.txt should allow public pages");
   assert.ok(
     robotsTxt.includes(
-      "Sitemap: https://monikanchan-chatterjee-portfolio.vercel.app/sitemap.xml"
+      `Sitemap: ${SITE_ORIGIN}/sitemap.xml`
     ),
     "robots.txt should point to the deployed sitemap"
   );

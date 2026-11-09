@@ -4,27 +4,28 @@ _Updated 2026-11-01._
 
 ## Assets and trust boundaries
 
-Assets are the public portfolio content, contact submissions, and integrity/availability of the deployment. The browser, local storage, GitHub response, user-submitted form fields, npm packages, GitHub Actions, EmailJS, Google Fonts, and hosting platform are separate trust boundaries. Public visitors can access every route.
+Assets are the public portfolio content, contact submissions, and integrity/availability of the deployment. The browser, GitHub response, user-submitted form fields, npm packages, GitHub Actions, Resend, Upstash Redis, Google Fonts, and hosting platform are separate trust boundaries. Public visitors can access every route.
 
-The site has no authentication, database, application-owned API, Route Handler, or Server Action. Client-side checks are not server security boundaries. EmailJS public identifiers are intentionally browser-visible.
+The site has no user account system or Server Action. It has a read-only GitHub Route Handler and public contact Route Handlers protected by short-lived email verification. Upstash Redis is the shared server-side store for OTPs, rate limits, and daily quotas.
 
 ## Threat scenarios and current classification
 
 | Scenario | Risk | Controls and residual risk |
 |---|---|---|
 | XSS from project/API or form text | Low | React text rendering, no `dangerouslySetInnerHTML`, normalized remote records, CSP with response nonce. Keep this invariant in tests. |
-| CSRF | Low / not applicable | No authenticated state-changing application endpoint exists. EmailJS submission is a public third-party operation, not a session-authenticated app action. |
-| SQL/NoSQL injection | Not applicable | No database or query layer exists. Reassess if one is introduced. |
-| SSRF | Not applicable | The server does not fetch user-supplied URLs. GitHub and EmailJS requests originate in the browser. |
-| API abuse / denial of service | Medium | GitHub rate limits apply; contact form has a honeypot, minimum dwell, and client-side cooldown. Those client checks are bypassable; configure EmailJS allowed origins, CAPTCHA/abuse controls, and quota alerts in its dashboard. |
-| Contact spam | Medium | Same client-side friction and generic failure messages; provider-side enforcement remains necessary and is not controlled by this repository. |
-| Secret leakage | Low, pending remote checks | No server-only credential is needed. `.env*` is ignored; `.env.example` contains only the existing public EmailJS identifiers, not private credentials. Scan Git history and enable GitHub secret scanning/push protection on the repository. |
+| CSRF | Low | Contact APIs accept JSON POSTs and no cookies authorize the caller; verification tokens are returned only to the same-origin browser. Cross-origin API access is not enabled. |
+| SQL/NoSQL injection | Low | Contact Redis uses fixed Lua scripts and HMAC-derived keys; user values are passed as script arguments, never interpolated into script source. |
+| SSRF | Low | The projects Route Handler uses a fixed GitHub API URL and accepts no caller-supplied URL. |
+| API abuse / denial of service | Medium | The public read-only GitHub route caches responses for one hour; contact code requests and submissions have shared Upstash limits by HMAC-hashed IP/email, including a two-verification-email daily cap per normalized address. Resend and EmailJS provider quotas also bound outbound email. |
+| Contact spam | Medium | A sender must receive an OTP, verification tokens are one-time, code attempts are limited, and two verification emails plus two messages per normalized email are reserved atomically per UTC day. Gmail dot/plus aliases share each quota. |
+| Secret leakage | Low | `GITHUB_TOKEN`, `RESEND_API_KEY`, `EMAILJS_PRIVATE_KEY`, and `UPSTASH_REDIS_REST_TOKEN` are server-only. Contact recipient/sender configuration and all EmailJS settings must not use a `NEXT_PUBLIC_` prefix. |
 | Dependency/supply-chain compromise | Medium | Lockfile, `npm ci`, audit gate, Dependabot, CodeQL, least-permission CI. GitHub Actions use major-version tags rather than immutable SHAs; review updates. |
 | Open redirect | Low | No redirect endpoint exists. GitHub repository URLs are constrained to the expected owner; demo URLs accept only HTTP(S) and disallow credentials. |
 | Clickjacking | Low | `X-Frame-Options: DENY` and CSP `frame-ancestors 'none'`. |
 | Security misconfiguration | Medium | Security headers are centralized and tested. HSTS is deliberately gated on verified production HTTPS; review Vercel settings before enabling. |
-| Cache poisoning / unintended caching | Low | No user-specific server or API cache exists; browser storage contains only the non-sensitive theme preference and contact cooldown timestamp. |
-| Unauthorized server functionality | Low | No authenticated server functionality or write endpoints exist. Protect any future handler independently. |
+| Cache poisoning / unintended caching | Low | Only public GitHub repository data is cached for one hour, with stale revalidation; responses are not user-specific. Browser storage contains only the non-sensitive theme preference; the one-time contact token remains in component state. |
+| Unauthorized server functionality | Low | Contact endpoints are unauthenticated but require a short-lived email-verification token; Redis is fail-closed and message quotas are enforced server-side. Protect future side-effecting handlers independently. |
+| Direct use of EmailJS outside the portfolio | Medium | EmailJS supports public-key browser requests. Keep its rotated public key and template IDs out of the client bundle; the Upstash two-message cap applies to submissions through this portfolio API, not direct requests to EmailJS if those identifiers are exposed. |
 | Compromised third-party scripts | Low | No third-party script is loaded from a CDN. Font CSS is fetched from Google; runtime libraries are bundled from npm. |
 
 ## Browser and HTTP controls
@@ -35,15 +36,17 @@ The site has no authentication, database, application-owned API, Route Handler, 
 
 ## Input, API, and data handling
 
+- `src/app/api/projects/route.js` calls only GitHub's fixed public repositories endpoint, keeps optional `GITHUB_TOKEN` server-side, and caches successful responses for one hour.
 - `src/lib/github-projects.js` validates response shape, repository ownership/URLs, dates, counts, and HTTP(S) demo URLs before display.
 - React renders descriptions as text; do not introduce unsafe HTML rendering.
-- Contact fields use browser-required validation. The honeypot, time-to-submit check, and local cooldown are usability/abuse friction only; they do not replace provider-side rate limits or CAPTCHA.
+- Contact fields are validated again in the server Route Handler. Verification codes expire after 10 minutes, can be attempted at most five times per 15-minute window, and successful verification tokens expire after 15 minutes. Redis Lua scripts atomically reserve at most two verification-email sends and two contact messages per normalized email per UTC day; failed email delivery rolls back the corresponding reservation when Redis is available.
+- Resend is the primary sender. The server calls EmailJS only when Resend returns an explicit daily/monthly quota error; network errors and other failures are not retried through another provider. Redis keys use HMAC-derived email/IP identifiers and store only a hash of each OTP and verification token. Mail contents are not written to application logs or Redis.
 - Errors shown to visitors are generic. Logs must not include form values or credentials.
-- There are no app endpoints to validate, rate-limit, protect against CSRF, or impose body-size limits on. If added, implement schema validation, rate limiting, size limits, generic errors, and security tests at the endpoint itself.
+- The projects endpoint is a public read-only GET with no user input or request body; it returns generic errors and does not expose the upstream error payload or token. Reassess abuse controls if it gains caller-controlled inputs or side effects.
 
 ## Environment and secret management
 
-There are no required server-only environment variables. `NEXT_PUBLIC_EMAILJS_*` values are public and are only checked before contact submission. Verify the existing public identifiers in `.env.example` against the EmailJS dashboard and configure them in each deployment environment; never put private credentials in `NEXT_PUBLIC_*`. If private credentials are ever introduced, rotate them through the issuing provider and store them as restricted deployment secrets.
+`GITHUB_TOKEN` is optional and server-only; add it to Vercel Preview/Production environment variables to raise the GitHub API rate limit. Use a fine-grained token with no repository permissions for public repository reads, set an expiry, and never prefix it with `NEXT_PUBLIC_`. Contact delivery requires server-only `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_RECIPIENT_EMAIL`, `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` values. Optional fallback delivery additionally requires the server-only EmailJS service/template IDs, public key, and private key. Verify the sending domain in Resend and configure variables separately for each Vercel environment.
 
 ## Dependency and release security
 
@@ -57,7 +60,8 @@ Use the private process in [SECURITY.md](../SECURITY.md). For exposed private cr
 
 ## Known residual risks
 
-- Contact abuse controls in the browser can be bypassed. Configure EmailJS origin restrictions and provider-side abuse controls before relying on the form at scale.
+- Contact delivery depends on Upstash availability and at least one configured provider having available quota; if Redis is unavailable, contact APIs intentionally fail closed. EmailJS is not an unlimited backup and should never be reconnected from browser code.
+- The two-message daily limit is enforced on the portfolio's contact API. EmailJS's public REST interface means this site-level limit cannot govern independent direct calls if its public key and template IDs are exposed; rotate any legacy public key before enabling the fallback.
 - The production HTTPS endpoint is verified and Vercel's edge supplies HSTS; the app-level `ENABLE_HSTS` flag remains off.
 - GitHub repository-level Secret Scanning and push protection require repository-owner settings; they cannot be enabled from the local project files.
-- The current code changes have not yet been deployed from this workspace. Vercel TLS/HSTS are verified, but monitoring, rollback, deployment environment values, and GitHub security-setting state remain unverified.
+- `GITHUB_TOKEN`, Resend, and Upstash environment values must be configured separately in Vercel; no credentials are committed to the repository.

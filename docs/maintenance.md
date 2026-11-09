@@ -15,8 +15,8 @@ Review Next.js, React, Node.js, Tailwind, and Node engine support before upgrade
 ## Troubleshooting
 
 - Missing UI assets: inspect static imports under `src/assets/` and Next image build output.
-- Contact form unavailable: confirm all three `NEXT_PUBLIC_EMAILJS_*` values and rebuild/redeploy; these values are exposed in browser output by design.
-- Contact messages rejected/spammed: inspect EmailJS origin restrictions, quotas, and provider dashboard; client throttling is bypassable.
+- Contact form unavailable: confirm the Resend sender domain is verified and all required server-only `RESEND_*`, `CONTACT_*`, and `UPSTASH_REDIS_*` variables are configured. For quota fallback, also check the EmailJS service/template IDs and server-only credentials.
+- Contact messages rejected/spammed: review provider delivery logs and Upstash quotas; the server enforces OTP attempts, IP/email request windows, two verification emails per normalized email per UTC day, and two messages per verified normalized email per UTC day.
 - CSP blocks a resource: identify the actual required host and narrowly add it to the correct directive; never broadly permit arbitrary scripts.
 - Header test fails: inspect the production `next start` output and `src/proxy.ts`/`next.config.ts`.
 

@@ -25,7 +25,7 @@ Resolve conflicts by inspecting the running code, documenting verified facts, an
 - Use the Next.js App Router. Keep server components as the default and put `"use client"` only on components that need browser APIs, state, effects, or event handlers.
 - Preserve the existing visual system and routes unless the requested change requires otherwise.
 - Validate data from external APIs and browser storage before using it. Render user/API text as normal React text; do not use `dangerouslySetInnerHTML`.
-- Keep private credentials server-side. `NEXT_PUBLIC_*` values are public; EmailJS browser identifiers are configuration, not secrets.
+- Keep private credentials server-side. `NEXT_PUBLIC_*` values are public; contact delivery uses server-only Resend and Upstash credentials.
 - Avoid new dependencies unless necessary; document the reason and verify compatibility/security.
 - Handle errors explicitly. Do not hide failures with broad catches or success-shaped fallbacks.
 - Do not add authentication, a database, or API routes unless the product requires them.
