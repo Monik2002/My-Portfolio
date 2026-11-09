@@ -1,5 +1,3 @@
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 function hasHeaderControlCharacters(value) {
   return Array.from(value).some((character) => {
     const code = character.charCodeAt(0);
@@ -18,11 +16,22 @@ function hasDisallowedMessageControls(value) {
 }
 
 export function isValidContactEmail(value) {
-  return (
-    typeof value === "string" &&
-    value.trim().length <= 254 &&
-    EMAIL_PATTERN.test(value.trim())
-  );
+  if (typeof value !== "string") return false;
+
+  const email = value.trim();
+  if (
+    email.length > 254 ||
+    Array.from(email).some((character) => character.trim() === "")
+  ) {
+    return false;
+  }
+
+  const atIndex = email.indexOf("@");
+  if (atIndex <= 0 || atIndex !== email.lastIndexOf("@")) return false;
+
+  const domain = email.slice(atIndex + 1);
+  const dotIndex = domain.indexOf(".");
+  return dotIndex > 0 && dotIndex < domain.length - 1;
 }
 
 export function normalizeEmailForContactLimit(value) {
