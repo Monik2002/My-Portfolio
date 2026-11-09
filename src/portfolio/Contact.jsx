@@ -195,7 +195,7 @@ const Contact = () => {
                       id="name"
                       maxLength={100}
                       disabled={isBusy}
-                      className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-xs focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="John Doe"
                       required
                     />
@@ -221,7 +221,7 @@ const Contact = () => {
                         setVerifiedEmail("");
                         setVerificationToken("");
                       }}
-                      className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="name@flowbite.com"
                       required
                     />
@@ -265,7 +265,7 @@ const Contact = () => {
                                 event.target.value.replace(/\D/g, "").slice(0, 6)
                               )
                             }
-                            className="block p-3 w-full sm:max-w-xs text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-dark-text"
+                            className="block p-3 w-full sm:max-w-xs text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-xs dark:bg-gray-700 dark:border-gray-600 dark:text-dark-text"
                             aria-describedby="verification-code-help"
                             required
                           />
@@ -307,7 +307,7 @@ const Contact = () => {
                       id="subject"
                       maxLength={150}
                       disabled={isBusy}
-                      className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-xs focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Let us know how we can help you"
                       required
                     />
@@ -325,7 +325,7 @@ const Contact = () => {
                       rows="6"
                       maxLength={3000}
                       disabled={isBusy}
-                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-xs border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark-text dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Leave a comment..."
                       required
                     ></textarea>
@@ -333,7 +333,7 @@ const Contact = () => {
                   <button
                     type="submit"
                     disabled={isBusy || !verificationToken}
-                    className="py-3 px-5 text-sm font-medium text-center rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    className="py-3 px-5 text-sm font-medium text-center rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-hidden focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
                     {isSubmitting
                       ? "Sending..."

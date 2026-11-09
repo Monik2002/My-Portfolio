@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Migrated the Tailwind CSS 4 PostCSS integration and preserved the existing class-based dark theme and contact form utility styles.
+
 ## 2026-11-01
 
 - Migrated the portfolio from Vite and React Router to the Next.js App Router while retaining the existing routes and shared UI.

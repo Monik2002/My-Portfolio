@@ -24,6 +24,7 @@ _Updated 2026-11-01._
 
 ## In progress / owner actions
 
+- Verify the Tailwind 4 migration in a Vercel preview before merging. The separate Netlify preview integration uses Node 18 and fails the project's Node engine requirement.
 - Add an expiring, no-repository-permissions GitHub fine-grained token as the Vercel `GITHUB_TOKEN` variable to enable the higher authenticated rate limit.
 - Verify `monikportfolio.tech` in Resend, add its requested DNS records, and add the Resend, contact-recipient, and Upstash variables to Vercel Preview/Production before enabling live contact delivery.
 - Configure the EmailJS verification template and server-only Vercel fallback variables; keep EmailJS disconnected from browser code.
