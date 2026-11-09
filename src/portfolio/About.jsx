@@ -425,16 +425,14 @@ const About = () => {
                         <span className="inline dark:hidden">🌻</span>
                         <span className="hidden dark:inline">⭐</span>
                       </h2>
-                      Hey, I&apos;m Monikanchan. I&apos;am a front-end
-                      developer. I&apos;ve been programming and writing code
-                      since 2021. I&apos;m passionate about learning new things
-                      and sharing my knowledge with others. I&apos;m a
-                      self-taught developer and I&apos;m always looking for new
-                      projects to work on. I&apos;m currently working on a few
-                      projects, including a blog, my portfolio, and a few other
-                      things. I&apos;m always looking for new opportunities to
-                      learn and grow as a developer, and looking for new ways to
-                      improve my skills.
+                      <p>
+                        Hey, I&apos;m Monikanchan, a Linux Administrator at
+                        Capgemini and a developer who enjoys building for the
+                        web. I graduated from Kalinga Institute of Industrial
+                        Technology and have been coding since 2021. I enjoy
+                        solving problems, learning new technologies, and
+                        sharing what I learn.
+                      </p>
                     </div>
                     <h2
                       id="what-im-doing-now"
@@ -448,12 +446,32 @@ const About = () => {
                       What I&apos;m doing now
                     </h2>
                     <p>
-                      I&apos;m currently engaged in several projects, including
-                      the development of my portfolio, participation in GSSOC
-                      (GirlScript Summer of Code), and various other
-                      initiatives. Additionally, I&apos;m actively writing few
-                      blog posts and simultaneously deepening my understanding
-                      of Redux through online tutorials on YouTube.
+                      My work includes Linux server administration, SSH
+                      troubleshooting, infrastructure monitoring, password
+                      management automation, and GitLab backups. I use shell
+                      scripting, Ansible, and Python to automate repetitive
+                      tasks and help improve system reliability.
+                    </p>
+                    <p>
+                      I also build full-stack applications using JavaScript,
+                      TypeScript, React, Next.js, Node.js, Express, and MongoDB,
+                      with Git and GitLab for version control. Through personal
+                      projects and open-source contributions, including
+                      GirlScript Summer of Code, I&apos;m growing toward a
+                      full-stack development career with a focus on DevOps,
+                      cloud technologies, and AI-driven automation.
+                    </p>
+                    <p>
+                      I&apos;ve earned the AWS Certified Cloud Practitioner,
+                      AWS Certified AI Practitioner, and GitHub Foundations
+                      credentials. You can see these and my other badges on{" "}
+                      <a
+                        href="https://www.credly.com/users/monikanchan-chatterjee.67a98c74/badges/credly"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        my Credly profile
+                      </a>.
                     </p>
                     {/* This is my spot on the web for writing, projects,
                       tutorials, art, and anything else I want to put out there.
@@ -462,21 +480,18 @@ const About = () => {
                       highlight of my open-source work. */}
                     {/* </p> */}
                     <p>
-                      My motivation for this site is to have a space for
-                      self-expression and {""}
-                      {/* to share what I&apos;ve learned with
-                      the world. I hope I will  */}
-                      inspire others to make their own creative corner on the
-                      web as well.
+                      This site is my space for self-expression and sharing
+                      my work. I hope it inspires others to create their own
+                      corner of the web.
                     </p>
                     <p>
-                      Feel free to contact me by email {""}
+                      Want to connect?{" "}
                       <a
                         href="https://mail.google.com/mail/?view=cm&fs=1&to=www.monikchatterjee@gmail.com&su=Hello%20Monik&body=Hi%20Monik,%0D%0A%0D%0AI%20wanted%20to%20reach%20out%20to%20you%20regarding..."
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Mail me here!
+                        Email me
                       </a>
                     </p>
                     <div className="group col-span-2 h-full">
