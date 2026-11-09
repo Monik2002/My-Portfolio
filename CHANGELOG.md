@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Updated the About page with Monik's current role, technical interests, career goals, and verified credentials linked to the public Credly profile.
 - Refined the home page with a clearer introduction, project and contact links, a responsive portrait treatment, and featured projects ahead of highlights.
 - Widened the shared layout, improved theme tokens and focus visibility, and clarified the theme control and heading semantics.
 - Extended shared surfaces and control states to About, Projects, and Contact; added a skip link, improved project link names and date contrast, and corrected footer icon proportions.
