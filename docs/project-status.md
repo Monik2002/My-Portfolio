@@ -46,6 +46,7 @@ _Updated 2026-11-01._
 - There is no user account system or relational database; Upstash Redis stores short-lived verification state and rate-limit counters.
 - The production hostname returned HTTP 200 over HTTPS and Vercel sent `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` on 2026-11-01. The app-level `ENABLE_HSTS` flag is separate; Vercel's edge already supplies HSTS.
 - Deployment environment values are controlled by Vercel and must be configured separately from this repository.
+- The Netlify mirror (`monikanchan-chatterjee-portfolio.netlify.app`) returned 404 on every route on 2026-11-09 because the Next.js runtime plugin was not attached; `netlify.toml` now declares `@netlify/plugin-nextjs`. Contact delivery on Netlify also needs the Resend/Upstash variables set in the Netlify dashboard.
 
 ## Next priorities
 
