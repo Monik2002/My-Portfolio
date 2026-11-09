@@ -25,7 +25,7 @@ const Navigation = () => {
       }`}
     >
       <div className="container">
-        <nav>
+        <nav aria-label="Main navigation">
           <div className="nav-item-outer">
             <Link
               className={`item home ${pathname === "/" ? "active" : ""}`}
@@ -78,13 +78,18 @@ const Navigation = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <Image src={github} alt="GitHub" className="nav-image" />
+              <Image src={github} alt="" className="nav-image" />
               <span>GitHub</span>
             </a>
           </div>
         </nav>
         <div className="theme-toggle">
-          <button type="button" onClick={toggleDarkMode} aria-label="Toggle dark mode">
+          <button
+            type="button"
+            onClick={toggleDarkMode}
+            aria-label={isDarkMode ? "Switch to light theme" : "Switch to dark theme"}
+            aria-pressed={isDarkMode}
+          >
             <Image src={moon} alt="" />
           </button>
         </div>

@@ -57,9 +57,7 @@ const HighlightSection = () => {
     // <div className="container">
     <section className="segment large">
       <h2 className="home-heading">
-        <div>
-          <div className="title">Highlights</div>
-        </div>
+        <span className="title">Highlights</span>
       </h2>
       <div className="highlight-preview">
         {highlights.map((highlight, index) => (

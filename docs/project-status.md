@@ -24,6 +24,12 @@ _Updated 2026-11-01._
 
 ## In progress / owner actions
 
+- Complete the remaining accessibility and interaction review for the portfolio visual refresh. Local mocked contact checks did not send real verification emails or contact messages.
+- The About page's 20 technology SVGs have accessible names matched against their icon paths. A complete keyboard, contrast, responsive, and screen-reader review remains outstanding; automated checks do not establish full WCAG compliance.
+- Local Chrome checks at 320, 390, 768, 1024, and 1440 CSS pixels found no horizontal overflow. Keyboard tab traversal and focus styling were checked on all four routes, and standalone touch targets were increased to at least 44px in the 390px check; inline prose links are an exception.
+- Mobile Lighthouse accessibility audits reported 100 on each route in light mode, and dark-mode snapshot audits also reported 100. This does not establish WCAG conformance or replace screen-reader and cross-browser checks.
+- Repository-wide ESLint excludes the locally installed `.github/skills/` scripts while continuing to check application and repository source files.
+- The visual refresh adds hero entrance, supported-browser scroll reveals, a featured-project layout, and pointer-based card depth; comprehensive cross-browser, route, and device verification remains outstanding.
 - Add an expiring, no-repository-permissions GitHub fine-grained token as the Vercel `GITHUB_TOKEN` variable to enable the higher authenticated rate limit.
 - Verify `monikportfolio.tech` in Resend, add its requested DNS records, and add the Resend, contact-recipient, and Upstash variables to Vercel Preview/Production before enabling live contact delivery.
 - Configure the EmailJS verification template and server-only Vercel fallback variables; keep EmailJS disconnected from browser code.
@@ -36,7 +42,7 @@ _Updated 2026-11-01._
 - Without `GITHUB_TOKEN`, server-side GitHub API calls still use the unauthenticated rate limit; the Projects page shows curated projects when that limit is exhausted.
 - Inline styles remain allowed by `style-src` to preserve existing UI behavior.
 - GitHub Actions are version-tagged rather than pinned to immutable commit SHAs.
-- Full `npm audit` reports five moderate findings in the ESLint/minimatch development-tooling chain; `npm audit --omit=dev` reports none. Automatic fixes propose an incompatible downgrade, so no forced fix was applied.
+- The latest local `npm audit` reports four moderate findings in the ESLint/minimatch development-tooling chain. Automatic fixes propose an incompatible downgrade, so no forced fix was applied.
 - There is no user account system or relational database; Upstash Redis stores short-lived verification state and rate-limit counters.
 - The production hostname returned HTTP 200 over HTTPS and Vercel sent `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` on 2026-11-01. The app-level `ENABLE_HSTS` flag is separate; Vercel's edge already supplies HSTS.
 - Deployment environment values are controlled by Vercel and must be configured separately from this repository.

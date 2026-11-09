@@ -59,6 +59,8 @@ try {
 
     const html = await response.text();
     assert.ok(html.includes(expectedText), `${route} should include page content`);
+    assert.ok(html.includes('href="#layout"'), `${route} should offer a skip link`);
+    assert.match(html, /id="layout"[^>]*tabindex="-1"/, `${route} should have a focusable skip target`);
     assert.ok(
       html.includes(`<title>${expectedTitle}</title>`),
       `${route} should have its own page title`
@@ -105,6 +107,19 @@ try {
     /<h1(?:\s[^>]*)?>Contact Me!<\/h1>/,
     "contact page should have a semantic page heading"
   );
+
+  const aboutHtml = await (await fetch(new URL("/me", baseUrl))).text();
+  for (const name of [
+    "TypeScript", "Docker", "Next.js", "Redis", "PostgreSQL", "React",
+    "Tailwind CSS", "Node.js", "Go", "JavaScript", "Amazon Web Services",
+    "WebStorm", "webpack", "Babel", "Yarn", "Git", "Spotify", "MongoDB",
+    "Visual Studio Code", "Discord",
+  ]) {
+    assert.ok(
+      aboutHtml.includes(`role="img" aria-label="${name}"`),
+      `About should give the ${name} icon an accessible name`
+    );
+  }
 
   const invalidVerification = await fetch(
     new URL("/api/contact/verification", baseUrl),

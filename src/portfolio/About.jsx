@@ -419,7 +419,7 @@ const About = () => {
                       learn and grow as a developer, and looking for new ways to
                       improve my skills.
                     </p> */}
-                    <div className="col-span-6 space-y-2 rounded-2xl bg-yellow-200 p-6 md:col-span-4 dark:bg-indigo-800">
+                    <div className="about-introduction">
                       <h2 className="font-semibold">
                         Introduction{" "}
                         <span className="inline dark:hidden">🌻</span>
@@ -487,7 +487,7 @@ const About = () => {
                         href="https://twitter.com/Monikanchan13"
                       >
                         <span className="sr-only">Twitter</span>
-                        <span className="transform-gpu transition duration-500 group-hover:scale-[1.3]">
+                        <span aria-hidden="true" className="transform-gpu transition duration-500 group-hover:scale-[1.3]">
                           <svg
                             stroke="currentColor"
                             fill="currentColor"
@@ -512,7 +512,7 @@ const About = () => {
                         href="https://discord.com/users/krrish2"
                       >
                         <span className="sr-only">Discord</span>
-                        <span className="transform-gpu transition duration-500 group-hover:scale-[1.3]">
+                        <span aria-hidden="true" className="transform-gpu transition duration-500 group-hover:scale-[1.3]">
                           <svg
                             stroke="currentColor"
                             fill="currentColor"
@@ -555,13 +555,13 @@ const About = () => {
         </div>
       </main>
       <div className="mx-auto grid max-w-3xl grid-cols-2 gap-6 px-6 pt-16">
-        <div className="col-span-3 flex items-center justify-center rounded-2xl bg-fuchsia-700 p-6 text-fuchsia-100 md:col-span-2">
+        <div className="technology-grid col-span-3 flex items-center justify-center rounded-2xl p-6 md:col-span-2">
           <div className="grid w-full grid-cols-4 grid-rows-4 gap-4 [&amp;>svg]:w-full [&amp;>svg]:text-center">
             <svg
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="TypeScript"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -573,7 +573,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Docker"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -585,7 +585,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Next.js"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -597,7 +597,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Redis"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -609,7 +609,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="PostgreSQL"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -621,7 +621,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="React"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -633,7 +633,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Tailwind CSS"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -645,7 +645,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Node.js"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -657,7 +657,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Go"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -669,7 +669,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="JavaScript"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -681,7 +681,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Amazon Web Services"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -693,7 +693,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="WebStorm"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -705,7 +705,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="webpack"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -717,7 +717,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Babel"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -729,7 +729,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Yarn"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -741,7 +741,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Git"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -753,7 +753,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Spotify"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -765,7 +765,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="MongoDB"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -777,7 +777,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Visual Studio Code"
               viewBox="0 0 24 24"
               height="24"
               width="24"
@@ -789,7 +789,7 @@ const About = () => {
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
-              role="img"
+              role="img" aria-label="Discord"
               viewBox="0 0 24 24"
               height="24"
               width="24"

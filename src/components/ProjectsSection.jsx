@@ -44,14 +44,12 @@ const ProjectPreview = ({ title, description, source, demoLink }) => {
 const ProjectsSection = () => {
   return (
     <section className="segment large">
-      <h2 className="home-heading">
-        <div>
-          <div className="title">Projects</div>
-        </div>
+      <div className="home-heading">
+        <h2 className="title">Projects</h2>
         <Link className="button" href="/projects">
           View all
         </Link>
-      </h2>
+      </div>
       <div className="post-preview">
         <ProjectPreview
           title="Binge Box"
