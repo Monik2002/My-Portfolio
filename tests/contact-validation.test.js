@@ -14,6 +14,10 @@ test("validates email syntax without claiming mailbox ownership", () => {
   assert.equal(isValidContactEmail(`${"a".repeat(243)}@example.com`), false);
 });
 
+test("rejects malformed email addresses with repeated dot separators", () => {
+  assert.equal(isValidContactEmail(`!@!.${"!.".repeat(80)}@`), false);
+});
+
 test("groups Gmail aliases under one daily contact quota", () => {
   assert.equal(
     normalizeEmailForContactLimit("Some.Name+portfolio@gmail.com"),
