@@ -9,3 +9,9 @@
 [build.environment]
   # package.json requires Node.js ^22.13.0 || >=24; CI uses Node 24.
   NODE_VERSION = "24"
+
+# The site was created as a Vite project, so Netlify never attached the
+# Next.js runtime automatically. Without it the raw `.next` folder is uploaded
+# as static files and every route returns 404. Declare it explicitly.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

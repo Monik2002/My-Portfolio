@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed the Netlify site returning "Page not found" on every route by declaring the Next.js runtime plugin (`@netlify/plugin-nextjs`) in `netlify.toml`.
 - Fixed Netlify builds failing on Node.js 18 by pinning Node.js 24 and the Next.js publish directory in `netlify.toml`, and added `.nvmrc`.
 - Updated the About page with Monik's current role, technical interests, career goals, and verified credentials linked to the public Credly profile.
 - Refined the home page with a clearer introduction, project and contact links, a responsive portrait treatment, and featured projects ahead of highlights.
