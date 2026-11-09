@@ -367,6 +367,7 @@ const Projects = () => {
         );
 
         if (isMounted) {
+          setCurrentPage(1);
           setProjects(getProjectsForDisplay(projectsWithDemoLink));
           setProjectLoadMessage(
             projectsWithDemoLink.length > 0
@@ -377,6 +378,7 @@ const Projects = () => {
       } catch (error) {
         console.error("Error fetching projects:", error);
         if (isMounted) {
+          setCurrentPage(1);
           setProjects(getProjectsForDisplay([]));
           setProjectLoadMessage(
             error.message === "GitHub returned HTTP 403."
@@ -457,6 +459,7 @@ const Projects = () => {
                       <div className="star">
                         <a
                           href={project.html_url + "/stargazers"}
+                          aria-label={`${project.stargazers_count} stars for ${project.name}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -491,6 +494,7 @@ const Projects = () => {
                       href={project.html_url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Source code for ${project.name}`}
                     >
                       Source
                     </a>
@@ -500,6 +504,7 @@ const Projects = () => {
                         href={project.demoLink}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`Live demo of ${project.name}`}
                       >
                         Demo
                       </a>

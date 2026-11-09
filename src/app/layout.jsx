@@ -46,10 +46,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
+        <a className="skip-link" href="#layout">Skip to content</a>
         <SiteProviders>
           <WelcomeSplash />
           <Navigation />
-          <div id="layout" className="layout">
+          <div id="layout" className="layout" tabIndex={-1}>
             {children}
           </div>
           <Footer />

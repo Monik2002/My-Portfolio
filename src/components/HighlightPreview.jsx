@@ -134,7 +134,7 @@ const HighlightPreview = ({
       </div>
       <div>
         <time>{date}</time>
-        <a className="card-header">{title}</a>
+        <span className="card-header">{title}</span>
       </div>
     </div>
   );

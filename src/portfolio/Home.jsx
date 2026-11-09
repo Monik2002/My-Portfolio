@@ -10,17 +10,11 @@ const Home = () => {
   const { isDarkMode } = useContext(ThemeContext);
   return (
     <main className={`${isDarkMode ? "dark" : ""}`}>
-      <div
-        className={`${
-          isDarkMode
-            ? "dark:bg-dark-bg dark:text-dark-text"
-            : "bg-white text-black"
-        }`}
-      >
+      <div className="home-content">
         <HeroSection />
         <div className="container">
-          <HighlightSection />
           <ProjectsSection />
+          <HighlightSection />
         </div>
       </div>
     </main>

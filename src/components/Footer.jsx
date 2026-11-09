@@ -25,7 +25,14 @@ function Footer() {
           type="button"
           className="scroll-to-top"
           aria-label="Scroll to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth",
+            })
+          }
         >
           <span aria-hidden="true">↑</span>
         </button>
@@ -52,9 +59,6 @@ function Footer() {
                 src={linkedinlogo}
                 alt="LinkedIn"
                 className="nav-image"
-                style={{
-                  width: "25px",
-                }}
               />
             </a>
             {/* <a
@@ -89,7 +93,7 @@ function Footer() {
               rel="noopener noreferrer"
             >
               <span>GitHub</span>
-              <Image src={github} alt="GitHub" />
+              <Image src={github} alt="" />
             </a>
             {/* <a
               href="https://www.netlify.com"
