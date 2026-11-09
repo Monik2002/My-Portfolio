@@ -1,0 +1,11 @@
+# Netlify build settings. These override the site's dashboard settings, which
+# still reflect the former Vite build (Node 18, `dist` publish directory).
+[build]
+  # Install from the lockfile only when dependencies are missing (e.g. CLI
+  # deploys that skip Netlify's install step); regular Git builds reuse them.
+  command = "([ -x node_modules/.bin/next ] || npm ci) && npm run build"
+  publish = ".next"
+
+[build.environment]
+  # package.json requires Node.js ^22.13.0 || >=24; CI uses Node 24.
+  NODE_VERSION = "24"

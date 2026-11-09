@@ -30,6 +30,9 @@ To raise the Projects page's GitHub API quota, add an expiring fine-grained pers
 
 ## Build and verification
 
+A Netlify site (`monikanchan-chatterjee-portfolio`) also builds from `main`. `netlify.toml` pins Node.js 24 and the `.next` publish directory, overriding stale dashboard settings from the former Vite build (Node 18, `dist`); The build command runs `npm ci` only when `node_modules/.bin/next` is missing, then `npm run build`. Netlify serves the app through its Next.js adapter. `.nvmrc` records the same Node version for local tools.
+
+
 Vercel should install from `package-lock.json`, run `npm run build`, and serve the Next.js production output. CI additionally runs lint, TypeScript checks, dependency audit, unit tests, and a production HTTP smoke test. Do not deploy when a required release check fails.
 
 ## HTTPS and security headers

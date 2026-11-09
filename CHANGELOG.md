@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed Netlify builds failing on Node.js 18 by pinning Node.js 24 and the Next.js publish directory in `netlify.toml`, and added `.nvmrc`.
 - Updated the About page with Monik's current role, technical interests, career goals, and verified credentials linked to the public Credly profile.
 - Refined the home page with a clearer introduction, project and contact links, a responsive portrait treatment, and featured projects ahead of highlights.
 - Widened the shared layout, improved theme tokens and focus visibility, and clarified the theme control and heading semantics.
